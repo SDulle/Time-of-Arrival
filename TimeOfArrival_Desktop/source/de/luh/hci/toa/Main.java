@@ -22,7 +22,7 @@ import jssc.SerialPort;
 
 public abstract class Main {
 
-	public static final boolean USE_COMPORT = true;
+	public static final boolean USE_COMPORT = false;
 
 	public static final String COMPORT_IN_NAME = "COM5";
 	public static final String COMPORT_OUT_NAME = "COM8";
