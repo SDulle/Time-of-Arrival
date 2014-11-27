@@ -2,6 +2,7 @@ package de.luh.hci.toa.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.WindowManager;
 import de.luh.hci.toa.applications.snake.Snake;
 import de.luh.hci.toa.applications.tetris.Tetris;
 import de.luh.hci.toa.network.TapListener;
@@ -15,6 +16,8 @@ public class SnakeActivity extends Activity implements TapListener {
 		super.onCreate(savedInstanceState);
 		
 		snake = new Snake(this);
+		
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		MainActivity.instance.tapReceiver.addTapListener(this);
 		setContentView(snake);

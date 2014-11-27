@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import de.luh.hci.toa.applications.visu.Visu;
 import de.luh.hci.toa.network.TapListener;
 
@@ -17,6 +18,8 @@ public class VisuActivity extends Activity implements TapListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		xdpi = getResources().getDisplayMetrics().xdpi;
 		ydpi = getResources().getDisplayMetrics().ydpi;
