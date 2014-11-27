@@ -25,21 +25,18 @@
         <activity
             android:name="de.luh.hci.toa.activities.SnakeActivity"
             android:label="@string/title_activity_snake" 
-            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             >
         </activity>
         <activity
             android:name="de.luh.hci.toa.activities.VisuActivity"
             android:label="Visu" 
-            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             >
         </activity>
         <activity
             android:name="de.luh.hci.toa.activities.TetrisActivity"
             android:label="Tetris" 
-            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             >
         </activity>
