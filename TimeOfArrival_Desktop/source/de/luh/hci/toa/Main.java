@@ -7,6 +7,7 @@ import static jssc.SerialPort.STOPBITS_1;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
@@ -101,7 +103,7 @@ public abstract class Main {
 		return s.accept();
 	}
 
-	public static void createGUI(SensorModule sm) {
+	public static void createGUI(final SensorModule sm) {
 		final GUI gui = new GUI(sm);
 
 		JFrame frame = new JFrame("Time of Arrival - Simulator");
@@ -143,12 +145,39 @@ public abstract class Main {
 			}
 		});
 
-		JButton b3 = new JButton("Reset");
+		final JButton b3 = new JButton("Reset");
 		b3.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				gui.reset();
+			}
+		});
+		
+		final JToggleButton b4 = new JToggleButton("Calibration");
+		b4.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(b4.isSelected()) {
+					sm.startCalibration(new PointProvider() {
+						@Override
+						public Point2D getPoint() {
+							
+							String s = JOptionPane.showInputDialog(b4, "x y");
+							if(s == null) return null;
+							
+							String[] input = s.split(" ");
+							double x = Double.parseDouble(input[0]);
+							double y = Double.parseDouble(input[1]);
+							
+							return new Point2D.Double(x, y);
+						}
+						
+					});
+				} else {
+					sm.endCalibration();
+				}
 			}
 		});
 
@@ -170,6 +199,7 @@ public abstract class Main {
 		menuBar.add(b1);
 		menuBar.add(b2);
 		menuBar.add(b3);
+		menuBar.add(b4);
 		menuBar.add(fuzzyVal);
 		menuBar.add(new JLabel("   Left-Click: Tap   |"));
 		menuBar.add(new JLabel("   Right-Click: Add Sensor"));

@@ -17,7 +17,7 @@ public class SensorModule extends Thread{
 	/**
 	 * Ausbreitungsgeschwindigkeit von Schall in dem verwendetem Material in m/µs
 	 */
-	public static double propSpeed = 0.00018; //600 m/s
+	public static double defaultPropSpeed = 0.00018; //600 m/s
 
 	/**
 	 * Unschärfefaktor bei simulierten Erschuetterungen<br>
@@ -26,13 +26,25 @@ public class SensorModule extends Thread{
 	 */
 	public static double fuzzyFactor = 0.01;
 
+	public static class Sensor {
+		final Point2D position;
+		double propSpeed = defaultPropSpeed;
+		
+		public Sensor(double x, double y) {
+			position = new Point2D.Double(x, y);
+		}
+	}
+	
 	public SensorEq[] lastEqs;
 	public Point2D[] lastSolution;
 
-	private List<Point2D> sensors = new ArrayList<>();
+	private List<Sensor> sensors = new ArrayList<>();
 	private List<TapListener> listeners = new ArrayList<>();
 	private OutputStream out = null;
 	private DataInputStream in = null;
+	
+	private boolean isCalibrating = false;
+	private PointProvider calibrationProvider = null;
 
 	private static double fuzzy(double value, double deviation) {
 		return value*(1+Math.random()*deviation*2-deviation);
@@ -55,8 +67,8 @@ public class SensorModule extends Thread{
 	public Point2D getCenter() {
 		Point2D center = new Point2D.Double();
 
-		for(Point2D s : sensors) {
-			center.setLocation(center.getX()+s.getX(), center.getY()+s.getY());
+		for(Sensor s : sensors) {
+			center.setLocation(center.getX()+s.position.getX(), center.getY()+s.position.getY());
 		}
 
 		center.setLocation(center.getX()/sensors.size(), center.getY()/sensors.size());
@@ -76,7 +88,7 @@ public class SensorModule extends Thread{
 	 * Alle derzeitigen Sensoren
 	 * @return
 	 */
-	public List<Point2D> getSensors() {
+	public List<Sensor> getSensors() {
 		return sensors;
 	}
 
@@ -84,8 +96,8 @@ public class SensorModule extends Thread{
 	 * Die Anzahl der benoetigten Sensorgleichungen
 	 * @return
 	 */
-	public int getEquationCount() {
-		int n = getSensorCount();
+	public int getEquationCount(int sensorCount) {
+		int n = sensorCount;
 
 		return (n*n-n)/2;
 	}
@@ -95,7 +107,7 @@ public class SensorModule extends Thread{
 	 * @param sensor
 	 */
 	public void addSensor(double x, double y) {
-		sensors.add(new Point2D.Double(x, y));
+		sensors.add(new Sensor(x, y));
 	}
 
 	public void addTapListener(TapListener tapListener) {
@@ -116,6 +128,51 @@ public class SensorModule extends Thread{
 	public void setIn(InputStream in) {
 		this.in = new DataInputStream(in);
 	}
+	
+	public void startCalibration(PointProvider pointProvider) {
+		isCalibrating = true;
+		calibrationProvider = pointProvider;
+		
+		System.out.println("yo");
+	}
+	
+	public void calibrate(long[] dt) {
+		Point2D point = calibrationProvider.getPoint();
+
+		if(point == null) return;
+		
+		double accu = 0;
+		int n = 0;
+		
+		for(int i=0; i<getSensorCount(); ++i) {
+			for(int j=i+1; j<getSensorCount(); ++j) {
+				Sensor si = sensors.get(i);
+				Sensor sj = sensors.get(j);
+				
+				double di = si.position.distance(point);
+				double dj = sj.position.distance(point);
+				
+				double dist = dj-di;
+				long t = dt[j]-dt[i];
+				
+				
+				accu += dist/t;
+				n++;
+			}
+		}
+		
+		double pSpeed = accu/n;
+		
+		for(Sensor s : sensors) {
+			s.propSpeed = pSpeed;
+		}
+		
+		System.out.println(String.format("%.3f m/s", pSpeed*1000000));
+	}
+	
+	public void endCalibration() {
+		isCalibrating = false;
+	}
 
 	/**
 	 * Simuliert eine Erschuetterung an der Position und ruft dann <code>trigger(long[] dt)</code> mit den Verzoegerungszeiten auf
@@ -129,9 +186,9 @@ public class SensorModule extends Thread{
 		long min = Long.MAX_VALUE;
 
 		int i=0;
-		for(Point2D s : sensors) {
-			double dist = s.distance(x, y);
-			dt[i] = (long)fuzzy(dist/propSpeed, fuzzyFactor);
+		for(Sensor s : sensors) {
+			double dist = s.position.distance(x, y);
+			dt[i] = (long)fuzzy(dist/s.propSpeed, fuzzyFactor);
 			min = Math.min(min, dt[i]);
 			++i;
 		}
@@ -155,12 +212,19 @@ public class SensorModule extends Thread{
 		System.out.println("["+new SimpleDateFormat("HH:mm:ss:SSS").format(Date.from(Instant.now()))+"]>"+
 				Arrays.toString(dt));
 		
+		if(isCalibrating) {
+			calibrate(dt);
+			return;
+		}
+		
 		//erstelle sensorgleichungen zwischen allen moeglichen Sensorpaaren
-		lastEqs = new SensorEq[getEquationCount()];
+		lastEqs = new SensorEq[getEquationCount(getSensorCount())];
 		int k = 0;
 		for(int i=0; i<getSensorCount(); ++i) {
 			for(int j=i+1; j<getSensorCount(); ++j) {
-				lastEqs[k++] = new SensorEq(sensors.get(i), sensors.get(j), propSpeed*(dt[i]-dt[j]));
+				Sensor si = sensors.get(i);
+				Sensor sj = sensors.get(j);
+				lastEqs[k++] = new SensorEq(si.position, sj.position, si.propSpeed*dt[i]-sj.propSpeed*dt[j]);
 			}
 		}
 
@@ -168,7 +232,7 @@ public class SensorModule extends Thread{
 		Point2D nearest = new Point2D.Double(0, 0);
 		for(int i=0; i<getSensorCount(); ++i) {
 			if(dt[i]==0) {
-				nearest = sensors.get(i);
+				nearest = sensors.get(i).position;
 				break;
 			}
 		}
@@ -184,6 +248,28 @@ public class SensorModule extends Thread{
 
 		for(TapListener tl : listeners) {
 			tl.onTap(x, y, theta);
+		}
+	}
+	
+	private void calculateSensorError(long[] dt) {
+		
+		SensorEq[] eqs = new SensorEq[getEquationCount(getSensorCount()-1)];
+		
+		for(int k=0; k<getSensorCount(); ++k) {
+			Sensor sk = sensors.get(k);
+			
+			int l = 0;
+			for(int i=0; i<getSensorCount(); ++i) {
+				for(int j=i+1; j<getSensorCount(); ++j) {
+					if(i==k || j==k) continue;
+					Sensor si = sensors.get(i);
+					Sensor sj = sensors.get(j);
+					eqs[l++] = new SensorEq(si.position, sj.position, si.propSpeed*dt[i]-sj.propSpeed*dt[j]);
+				}
+			}
+			
+			
+			
 		}
 	}
 

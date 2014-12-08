@@ -128,8 +128,8 @@ public class GUI extends JPanel implements TapListener {
 
 		//Sensoren zeichnen
 		g2d.setColor(Color.BLACK);
-		for(Point2D s : sm.getSensors()) {
-			g2d.fillOval(-5+(int)(s.getX()/dx), -5+(int)(s.getY()/dy), 10, 10);
+		for(SensorModule.Sensor s : sm.getSensors()) {
+			g2d.fillOval(-5+(int)(s.position.getX()/dx), -5+(int)(s.position.getY()/dy), 10, 10);
 		}
 
 		//Kreuz an der getippten stelle zeichnen
