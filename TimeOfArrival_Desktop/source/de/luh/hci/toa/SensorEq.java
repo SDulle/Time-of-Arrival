@@ -1,8 +1,17 @@
 package de.luh.hci.toa;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 
 public class SensorEq {
+	
+	public static enum LayerFunction {
+		Average,
+		Median,
+		Min
+	}
+	
+	public static LayerFunction layerFunction = LayerFunction.Average;
 	
 	private Point2D si, sj;
 	private double cdt;
@@ -54,11 +63,39 @@ public class SensorEq {
 	}
 	
 	public static double getValue(SensorEq[] eqs, double x, double y) {
-		double ret = 0;
-		for(SensorEq e : eqs) {
-			ret+=e.getValue(x, y);
+		
+		if(layerFunction == LayerFunction.Average) {
+			double ret = 0;
+			for(SensorEq e : eqs) {
+				ret+=e.getValue(x, y);
+			}
+			return ret;
+		} 
+		
+		if(layerFunction == LayerFunction.Min) {
+			double min = Double.POSITIVE_INFINITY;
+			
+			for(SensorEq e : eqs) {
+				min = Math.min(e.getValue(x, y), min);
+			}
+			return min;
 		}
-		return ret;
+		
+		if(layerFunction == LayerFunction.Median) {
+			double[] vals = new double[eqs.length];
+			
+			for(int i=0; i<vals.length; ++i) {
+				vals[i] = eqs[i].getValue(x, y);
+			}
+			
+			Arrays.sort(vals);
+			
+			return vals[vals.length/2];
+		}
+
+		
+		
+		return 0;
 	}
 	
 	public static double[] getGradient(SensorEq[] eqs, double x, double y) {

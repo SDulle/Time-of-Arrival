@@ -13,6 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -20,11 +21,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import de.luh.hci.toa.SensorEq.LayerFunction;
+
 import jssc.SerialPort;
 
 public abstract class Main {
 
-	public static final boolean USE_COMPORT = true;
+	public static final boolean USE_COMPORT = false;
 
 	public static final String COMPORT_IN_NAME = "COM5";
 	public static final String COMPORT_OUT_NAME = "COM8";
@@ -194,6 +197,16 @@ public abstract class Main {
 				}
 			}
 		});
+		
+		final JComboBox<SensorEq.LayerFunction> layerFunc = new JComboBox<>(LayerFunction.values());
+		layerFunc.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SensorEq.layerFunction = (LayerFunction)layerFunc.getSelectedItem();
+				gui.repaint();
+			}
+		});
+		
 
 		menuBar.add(b0);
 		menuBar.add(b1);
@@ -201,6 +214,7 @@ public abstract class Main {
 		menuBar.add(b3);
 		menuBar.add(b4);
 		menuBar.add(fuzzyVal);
+		menuBar.add(layerFunc);
 		menuBar.add(new JLabel("   Left-Click: Tap   |"));
 		menuBar.add(new JLabel("   Right-Click: Add Sensor"));
 
