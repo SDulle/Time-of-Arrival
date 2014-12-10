@@ -24,10 +24,11 @@ import javax.swing.JToggleButton;
 import de.luh.hci.toa.SensorEq.LayerFunction;
 
 import jssc.SerialPort;
+import jssc.SerialPortException;
 
 public abstract class Main {
 
-	public static final boolean USE_COMPORT = false;
+	//public static final boolean USE_COMPORT = false;
 
 	public static final String COMPORT_IN_NAME = "COM5";
 	public static final String COMPORT_OUT_NAME = "COM8";
@@ -36,6 +37,10 @@ public abstract class Main {
 	public static final int DATABITS = DATABITS_8;
 	public static final int STOPBITS = STOPBITS_1;
 	public static final int PARITY   = PARITY_NONE;
+	
+	public static GUI gui;
+	
+	public static PointLogger log;
 
 
 	public static void main(String[] args) throws Exception {
@@ -55,7 +60,7 @@ public abstract class Main {
 		//24 x 17.5
 
 		//Ist eine Verbindung zum Arduino möglich, so wird diese hergestellt
-		if(USE_COMPORT) {
+		try {
 
 			//Erstellt ein neues SerialPort Objekt der JSSC-Library und öffnet den Port.
 			//COMPORT_IN_NAME bezeichnet dabei den String-Identifier, den der Comport trägt. In der Regel
@@ -77,6 +82,8 @@ public abstract class Main {
 			//Damit die Informationen verarbeitet werden können muss das SensorModule gestartet werden
 			//WICHTIG: Nachdem das SensorModul gestartet wurde, sollten keine neuen Sensoren installiert werden
 			sensorModule.start();
+		} catch(SerialPortException e) {
+			System.err.println("Comport "+COMPORT_IN_NAME+" not available.");
 		}
 
 		//Nun kann eine Anwendung über das TapListener-Interface auf Tap-Ereignisse reagieren
@@ -95,7 +102,9 @@ public abstract class Main {
 		//Wenn gewünscht, kann nun die GUI gestartet werden, über welche die Tap-Ereignisse visulaisiert werden kann
 		createGUI(sensorModule);
 		
-		//blueToothTest();
+		//Logger starten
+		log = new PointLogger();
+		sensorModule.addTapListener(log);
 	}
 	
 	public static Socket getConnection() throws IOException {
@@ -107,7 +116,7 @@ public abstract class Main {
 	}
 
 	public static void createGUI(final SensorModule sm) {
-		final GUI gui = new GUI(sm);
+		gui = new GUI(sm);
 
 		JFrame frame = new JFrame("Time of Arrival - Simulator");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -183,6 +192,19 @@ public abstract class Main {
 				}
 			}
 		});
+		
+		final JToggleButton b5 = new JToggleButton("Log");
+		b5.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(b5.isSelected()) {
+					log.start();
+				} else {
+					log.stop();
+				}
+			}
+		});
 
 		final JTextField fuzzyVal = new JTextField("0.01");
 		fuzzyVal.setSize(fuzzyVal.getHeight(), 80);
@@ -213,6 +235,7 @@ public abstract class Main {
 		menuBar.add(b2);
 		menuBar.add(b3);
 		menuBar.add(b4);
+		menuBar.add(b5);
 		menuBar.add(fuzzyVal);
 		menuBar.add(layerFunc);
 		menuBar.add(new JLabel("   Left-Click: Tap   |"));
