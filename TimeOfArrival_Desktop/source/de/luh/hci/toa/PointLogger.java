@@ -2,6 +2,7 @@ package de.luh.hci.toa;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.channels.Pipe;
 
 import javax.swing.JOptionPane;
 
@@ -29,7 +30,7 @@ public class PointLogger implements TapListener {
 		try {
 			out = new PrintWriter(fileName);
 			
-			out.println("messX, messY, messTheta, sollX, sollY, sollTheta");
+			out.println("messX, messY, messTheta, sollTheta");
 			out.flush();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -47,11 +48,13 @@ public class PointLogger implements TapListener {
 		String[] split = str.split(" ");
 		
 		try {
-			double ctrlX = Double.parseDouble(split[0])/100;
-			double ctrlY = Double.parseDouble(split[1])/100;
-			double ctrlTheta = Math.atan2(ctrlY, ctrlX);
+			double ctrlTheta = Double.parseDouble(split[0]);
 			
-			out.println(x+", "+y+", "+theta+", "+ctrlX+", "+ctrlY+", "+ctrlTheta);
+			double winkel = (theta<0 ? theta+2*Math.PI : theta)%(2*Math.PI);
+			
+			winkel *= 360/(2*Math.PI);
+			
+			out.println(x+", "+y+", "+winkel+", "+ctrlTheta);
 			out.flush();
 			
 		}catch(NumberFormatException e) {

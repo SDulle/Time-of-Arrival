@@ -106,7 +106,7 @@ public class Tetris extends View {
 			}
 
 			
-			//invalidate();
+			postInvalidate();
 		}
 	}
 

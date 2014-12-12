@@ -13,8 +13,6 @@ public class VisuActivity extends Activity implements TapListener {
 	public static double xdpi, ydpi;
 	public Visu visu;
 	
-	public GestureDetector gest;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,20 +22,7 @@ public class VisuActivity extends Activity implements TapListener {
 		xdpi = getResources().getDisplayMetrics().xdpi;
 		ydpi = getResources().getDisplayMetrics().ydpi;
 		
-		visu = new Visu(this, new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-			@Override
-			public boolean onSingleTapConfirmed(MotionEvent e) {
-				visu.tap(e);
-				System.out.println("tap");
-				return true;
-			}
-			
-			@Override
-			public boolean onDown(MotionEvent e) {
-				System.out.println("down");
-				return super.onDown(e);
-			}
-		}));
+		visu = new Visu(this);
 		
 		MainActivity.instance.tapReceiver.addTapListener(this);
 		setContentView(visu);
@@ -49,7 +34,6 @@ public class VisuActivity extends Activity implements TapListener {
 		
 		
 		MainActivity.instance.tapReceiver.removeTapListener(this);
-		visu.end();
 	}
 
 	@Override

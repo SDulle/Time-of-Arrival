@@ -1,14 +1,17 @@
 package de.luh.hci.toa.applications.snake;
 
+import java.io.Serializable;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class Snake extends View{
+public class Snake extends View implements Serializable {
 
 	private Paint emptyPaint = new Paint();
 	private Paint foodPaint = new Paint();
@@ -98,6 +101,7 @@ public class Snake extends View{
 		});
 	}
 	
+	
 
 	public void end() {
 		die();
@@ -169,7 +173,7 @@ public class Snake extends View{
 			food[index] = true;
 		}
 	}
-
+	
 	protected int index(int x, int y) {
 		return y*width+x;
 	}
