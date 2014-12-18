@@ -17,7 +17,7 @@ public class SensorModule extends Thread{
 	/**
 	 * Ausbreitungsgeschwindigkeit von Schall in dem verwendetem Material in m/µs
 	 */
-	public static double defaultPropSpeed = 0.00018; //600 m/s
+	public static double defaultPropSpeed = 0.0001; //600 m/s
 
 	/**
 	 * Unschärfefaktor bei simulierten Erschuetterungen<br>
