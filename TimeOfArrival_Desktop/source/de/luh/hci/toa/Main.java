@@ -115,6 +115,8 @@ public abstract class Main {
 		return s.accept();
 	}
 
+	public static int i = 0;
+	
 	public static void createGUI(final SensorModule sm) {
 		gui = new GUI(sm);
 

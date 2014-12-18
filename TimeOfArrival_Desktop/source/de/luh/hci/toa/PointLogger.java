@@ -36,12 +36,17 @@ public class PointLogger implements TapListener {
 			e.printStackTrace();
 		}
 	}
+	
+	public int i = 0;
 
 	@Override
 	public void onTap(double x, double y, double theta) {
 		if(out == null) return;
 		
-		String str = JOptionPane.showInputDialog(Main.gui, String.format("Gemessen:\n\tx = %.2fcm\n\ty = %.2fcm\n\nIst-Wert (in cm) eingeben:", x*100, y*100));
+		String initialSelection = ""+((i++)*10%360);
+		String message = String.format("Gemessen:\n\tx = %.2fcm\n\ty = %.2fcm\n\nIst-Wert (in Grad) eingeben:", x*100, y*100);
+		
+		String str = JOptionPane.showInputDialog(Main.gui, message, initialSelection);
 		
 		if(str == null) return;
 		
