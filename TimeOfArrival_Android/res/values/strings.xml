@@ -4,5 +4,6 @@
     <string name="app_name">TimeOfArrival</string>
     <string name="title_activity_snake">SnakeActivity</string>
     <string name="hello_world">Hello world!</string>
+    
 
 </resources>

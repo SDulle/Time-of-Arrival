@@ -35,6 +35,7 @@
         android:onClick="startSnake"
         android:text="Snake" />
 
+    <!--
     <RadioGroup
         android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
@@ -83,7 +84,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioGroup1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp"
-        android:ems="10" />
+        android:layout_marginTop="26dp"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+	-->
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:textOff="Not Connected"
+        android:textOn="Connected" 
+        android:onClick="connect"/>
 
 </RelativeLayout>

@@ -13,6 +13,7 @@ import de.luh.hci.toa.network.TapReceiver;
 import de.luh.hci.toa.network.UDPAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.sax.TextElementListener;
 import android.view.View;
@@ -46,7 +47,7 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.main_activity);
 		
-		connectionInfoText = (EditText)findViewById(R.id.editText1);
+		//connectionInfoText = (EditText)findViewById(R.id.editText1);
 	}
 
 	@Override
@@ -73,42 +74,59 @@ public class MainActivity extends Activity {
 		Intent tetrisIntent = new Intent(this, TetrisActivity.class);
 		startActivity(tetrisIntent);
 	}
-
-	private void deactivateNetworkOptions() {
-		findViewById(R.id.radio0).setEnabled(false);
-		findViewById(R.id.radio1).setEnabled(false);
-		findViewById(R.id.radio2).setEnabled(false);
-		findViewById(R.id.radio3).setEnabled(false);
-	}
 	
-	public void switchOff(View view) {
-		System.out.println("network off");
-	}
-
-	public void switchUDP(View view) {
-		System.out.println("network udp");
-		
-		UDPAdapter adapter = new UDPAdapter();
-		
-		try {
-			adapter.open("");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
+	public void connect(View view) {
+	
+	UDPAdapter adapter = new UDPAdapter();
+	
+	try {
+		adapter.open("");
 		tapReceiver.setNetworkAdapter(adapter);
-		
 		tapReceiver.start();
+		findViewById(R.id.toggleButton1).setEnabled(false);
+		findViewById(R.id.toggleButton1).setBackgroundColor(Color.GREEN);
 		
-		deactivateNetworkOptions();
+		System.out.println("Network start");
+	} catch(Exception e) {
+		e.printStackTrace();
 	}
+}
 
-	public void switchTCP(View view) {
-		System.out.println("network tcp "+connectionInfoText.getText());
-	}
-
-	public void switchBT(View view) {
-		System.out.println("network bt");
-	}
+//	private void deactivateNetworkOptions() {
+//		findViewById(R.id.radio0).setEnabled(false);
+//		findViewById(R.id.radio1).setEnabled(false);
+//		findViewById(R.id.radio2).setEnabled(false);
+//		findViewById(R.id.radio3).setEnabled(false);
+//	}
+//	
+//	public void switchOff(View view) {
+//		System.out.println("network off");
+//	}
+//
+//	public void switchUDP(View view) {
+//		System.out.println("network udp");
+//		
+//		UDPAdapter adapter = new UDPAdapter();
+//		
+//		try {
+//			adapter.open("");
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		tapReceiver.setNetworkAdapter(adapter);
+//		
+//		tapReceiver.start();
+//		
+//		deactivateNetworkOptions();
+//	}
+//
+//	public void switchTCP(View view) {
+//		System.out.println("network tcp "+connectionInfoText.getText());
+//	}
+//
+//	public void switchBT(View view) {
+//		System.out.println("network bt");
+//	}
 
 }
