@@ -26,6 +26,7 @@ public class ButtonExample extends Activity implements TapListener {
 
 		setContentView(bb);
 		System.out.println("blabla");
+		System.out.println("blabla");
 
 	}
 
