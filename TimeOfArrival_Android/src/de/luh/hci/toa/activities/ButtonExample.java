@@ -38,7 +38,7 @@ public class ButtonExample extends Activity implements TapListener {
 
 	@Override
 	public void onTap(double x, double y, double theta) {
-		if(theta<0) theta += 2*Math.PI;
+		//if(theta<0) theta += 2*Math.PI;
 		bb.input(theta);
 	}
 
