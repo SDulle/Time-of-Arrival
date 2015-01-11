@@ -209,7 +209,7 @@ public class SensorModule extends Thread{
 	 */
 	public void trigger(long[] dt) {
 
-		System.out.println("["+new SimpleDateFormat("HH:mm:ss:SSS").format(Date.from(Instant.now()))+"]>"+
+		System.out.println("["+new SimpleDateFormat("HH:mm:ss:SSS").format(new Date())+"]>"+
 				Arrays.toString(dt));
 		
 		if(isCalibrating) {
