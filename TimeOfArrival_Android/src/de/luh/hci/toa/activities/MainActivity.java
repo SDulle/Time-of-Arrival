@@ -69,6 +69,11 @@ public class MainActivity extends Activity {
 		Intent buttonExampleIntent = new Intent(this, ButtonExample.class);
 		startActivity(buttonExampleIntent);
 	}
+	
+	public void startHockey(View view) {
+		Intent hockeyIntent = new Intent(this, HockeyActivity.class);
+		startActivity(hockeyIntent);
+	}
 
 	public void connect(View view) {
 

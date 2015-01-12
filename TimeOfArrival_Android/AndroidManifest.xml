@@ -46,6 +46,12 @@
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             >
         </activity>
+        <activity
+            android:name="de.luh.hci.toa.activities.HockeyActivity"
+            android:label="HockeyActivity" 
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            >
+        </activity>
     </application>
 
 </manifest>
