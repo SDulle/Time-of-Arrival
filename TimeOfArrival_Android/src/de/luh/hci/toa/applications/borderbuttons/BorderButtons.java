@@ -56,9 +56,8 @@ public class BorderButtons extends View{
 
 				double a = Math.atan2(y - getHeight() / 2, x - getWidth() / 2);
 
-
-				input(a);
-				System.out.println("Winkel: "  + a);
+				//Minus ist wichtig
+				input(-a);
 
 				return true;
 			}
@@ -70,7 +69,7 @@ public class BorderButtons extends View{
 		if(theta < 0.0){
 			theta = theta + TWOPI;
 		}
-		theta = 2 * Math.PI - theta % (TWOPI);
+		theta = theta % (TWOPI);
 		
 		for(int i = 0; i< virtualButtons.size(); i++){
 			if(theta >=  i*TWOPI/virtualButtons.size() && theta < (i+1)*TWOPI/virtualButtons.size()){
