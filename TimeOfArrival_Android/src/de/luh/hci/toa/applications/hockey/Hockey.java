@@ -13,9 +13,9 @@ import android.view.View.OnTouchListener;
 
 public class Hockey extends View {
 
-	public static final double FIELD_HEIGHT = 1;
-	public static final double FIELD_WIDTH = 2;
-	public static final double FIELD_PLAYERAREA = 1.5;
+	//public static final double FIELD_HEIGHT = 1;
+	//public static final double FIELD_WIDTH = 2;
+	//public static final double FIELD_PLAYERAREA = 1.5;
 
 	public static final double DISC_STUCK_THRESHOLD = 0.01;
 	public static final double DISC_BOUNCE_SLOWDOWN = 0.8;
@@ -74,7 +74,6 @@ public class Hockey extends View {
 					double a = Math.atan2(y-getHeight()/2, x-getWidth()/2);
 
 					input(-a);
-					System.out.println("yoo");
 					return true;
 				} else {
 					return false;
@@ -106,12 +105,12 @@ public class Hockey extends View {
 	}
 
 	public void checkBounce() {
-		if(Math.abs(_discY)+DISC_SIZE > FIELD_HEIGHT) {
+		if(Math.abs(_discY)+DISC_SIZE > getFieldHeight()) {
 
 			if(_discY > 0) {
-				_discY -= 2*(_discY + DISC_SIZE - FIELD_HEIGHT);
+				_discY -= 2*(_discY + DISC_SIZE - getFieldHeight());
 			} else {
-				_discY += 2*(-_discY + DISC_SIZE - FIELD_HEIGHT);
+				_discY += 2*(-_discY + DISC_SIZE - getFieldHeight());
 			}
 
 			_discVY *= -1;
@@ -120,7 +119,7 @@ public class Hockey extends View {
 	}
 
 	public void checkStuck() {
-		if(Math.abs(_discX) < FIELD_PLAYERAREA && getVelocity() <= DISC_STUCK_THRESHOLD) {
+		if(Math.abs(_discX) < getPlayerArea() && getVelocity() <= DISC_STUCK_THRESHOLD) {
 			reset(currentPlayer == 1 ? 2 : 1);
 		}
 	}
@@ -131,21 +130,33 @@ public class Hockey extends View {
 	}
 
 	public void checkPlayer1Score() {
-		if(_discX > FIELD_WIDTH+DISC_SIZE) {
+		if(_discX > getFieldWidth()+DISC_SIZE) {
 			//TODO: add score to player 1
 			reset(2);
 		}
 	}
 
 	public void checkPlayer2Score() {
-		if(_discX < -FIELD_WIDTH-DISC_SIZE) {
+		if(_discX < -getFieldWidth()-DISC_SIZE) {
 			//TODO: add score to player 2
 			reset(1);
 		}
 	}
 	
+	public double getFieldWidth() {
+		return 2;//getWidth()/2;
+	}
+	
+	public double getFieldHeight() {
+		return 1;//getHeight()/2;
+	}
+	
+	public double getPlayerArea(){
+		return getFieldWidth()*0.75;
+	}
+	
 	public void hit(double position, int player) {
-		double x = player == 1 ? -FIELD_WIDTH : FIELD_WIDTH;
+		double x = player == 1 ? -getFieldWidth() : getFieldWidth();
 		double y = position;
 		lastTapX = x;
 		lastTapY = y;
@@ -157,7 +168,7 @@ public class Hockey extends View {
 		_discVX = _discX-x;
 		_discVY = _discY-y;
 		
-		setVelocity(Math.min(0.4, 0.05*1/dist));
+		setVelocity(Math.min(0.4, 0.5*1/dist));
 		
 		currentPlayer = player;
 
@@ -194,7 +205,7 @@ public class Hockey extends View {
 
 	public void reset(int player) {
 		_discY = 0;
-		_discX = (FIELD_WIDTH+FIELD_PLAYERAREA)/2;
+		_discX = (getFieldWidth()+getPlayerArea())/2;
 		_discVX = 0;
 		_discVY = 0;
 
@@ -212,7 +223,7 @@ public class Hockey extends View {
 		int h = getHeight();
 		
 		canvas.translate(w/2, h/2);
-		canvas.scale((float)((w/2)/FIELD_WIDTH), (float)((h/2)/FIELD_HEIGHT));
+		canvas.scale((float)((w/2)/getFieldWidth()), (float)((h/2)/getFieldHeight()));
 		
 		//System.out.println(_discX+" "+_discY);
 		//canvas.drawCircle((float)_discX, (float)_discY, 0.2f, discPaint);

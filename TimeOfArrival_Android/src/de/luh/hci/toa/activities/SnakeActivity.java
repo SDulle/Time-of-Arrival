@@ -4,18 +4,19 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 import de.luh.hci.toa.applications.snake.Snake;
+import de.luh.hci.toa.applications.snake.SuperSnake;
 import de.luh.hci.toa.applications.tetris.Tetris;
 import de.luh.hci.toa.network.TapListener;
 
 public class SnakeActivity extends Activity implements TapListener {
 
-	private Snake snake;
+	private SuperSnake snake;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		snake = new Snake(this);
+		snake = new SuperSnake(this);
 		
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -35,6 +36,7 @@ public class SnakeActivity extends Activity implements TapListener {
 
 	@Override
 	public void onTap(double x, double y, double theta) {
-		snake.turn(snake.getHeadingForAngle(theta));
+		//snake.turn(snake.getHeadingForAngle(theta));
+		snake.input(-theta);
 	}
 }
