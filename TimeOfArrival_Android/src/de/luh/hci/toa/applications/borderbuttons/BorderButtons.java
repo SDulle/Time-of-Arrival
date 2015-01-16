@@ -259,14 +259,11 @@ public class BorderButtons extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		
 		canvas.drawColor(Color.WHITE);
 		
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			virtualButtons.get(i).paint(canvas, linePainter);
 		}
-
-		
 
 		int width = canvas.getWidth();
 		int height = canvas.getHeight();
@@ -274,106 +271,18 @@ public class BorderButtons extends View {
 		int min = Math.min(width, height);
 
 		if (paintIndex != -1) {
-
-			Path path = new Path();
-
-			float firstX = (float) Math.sin(((double) paintIndex)
-					/ virtualButtons.size() * TWOPI + PI2)
-					* min + width / 2;
-			float firstY = (float) Math.cos(((double) paintIndex)
-					/ virtualButtons.size() * TWOPI + PI2)
-					* min + height / 2;
-			float secondX = (float) Math.sin(((double) paintIndex + 1)
-					/ virtualButtons.size() * TWOPI + PI2)
-					* min + width / 2;
-			float secondY = (float) Math.cos(((double) paintIndex + 1)
-					/ virtualButtons.size() * TWOPI + PI2)
-					* min + height / 2;
-
-			path.moveTo(width / 2, height / 2);
-			path.lineTo((int) firstX, (int) firstY);
-			path.lineTo((int) secondX, (int) secondY);
-			path.lineTo((int) width / 2, (int) height / 2);
-			path.close();
-			canvas.drawPath(path, filledPainter);
-
+			
+			virtualButtons.get(paintIndex).paint(canvas, filledPainter);
 			handler.removeCallbacks(r);
 			handler.postDelayed(r, 1000);
 
 			paintIndex = -1;
 		}
 
-//		for (int i = 0; i < virtualButtons.size(); i++) {
-//			Path path = new Path();
-//			
-//			float[] coords = getXY(i, min,width,height);
-//			
-//			float startX = coords[0];
-//			float startY = coords[1];
-//			float x = coords[2];
-//			float y = coords[3];
-//			
-//			coords = getXY(i + 1, min,width,height);
-//			
-//			float startX1 = coords[0];
-//			float startY1 = coords[1];
-//			float x1 = coords[2];
-//			float y1 = coords[3];
-//	
-//			
-//			path.moveTo(startX + width / 2, startY + height / 2);
-//			path.lineTo(x + width/ 2, y + height / 2);
-//			
-//			
-//			if(x >= width/2 && y1 <= -height/2){
-//				path.lineTo(width, 0);
-//				path.lineTo(x1 + width/ 2, y1 + height / 2);
-//				path.lineTo(startX1 + width / 2, startY1 + height / 2);
-//				path.lineTo(width - min * BUTTON_SIZE, min * BUTTON_SIZE);
-//				
-//			}else if(x1 <= -width/2 && y <= -height/2){
-//				path.lineTo(0, 0);
-//				path.lineTo(x1 + width/ 2, y1 + height / 2);
-//				path.lineTo(startX1 + width / 2, startY1 + height / 2);
-//				path.lineTo(BUTTON_SIZE *min, min * BUTTON_SIZE);
-//			}else if(x <= -width/2 && y1 >= height/2){
-//				path.lineTo(0, height);
-//				path.lineTo(x1 + width/ 2, y1 + height / 2);
-//				path.lineTo(startX1 + width / 2, startY1 + height / 2);
-//				path.lineTo(BUTTON_SIZE *min, height - min * BUTTON_SIZE);
-//			}else if(x1 >= width/2 && y >= height/2){
-//				path.lineTo(width, height);
-//				path.lineTo(x1 + width/ 2, y1 + height / 2);
-//				path.lineTo(startX1 + width / 2, startY1 + height / 2);
-//				path.lineTo(width - BUTTON_SIZE *min, height - min * BUTTON_SIZE);
-//			}
-//			else{
-//			
-//				path.lineTo(x1 + width/ 2, y1 + height / 2);
-//				path.lineTo(startX1 + width / 2, startY1 + height / 2);
-//			}
-//					
-//			path.lineTo(startX + width / 2, startY + height / 2);
-//			path.close();
-//
-//			canvas.drawPath(path, linePainter);
-//			canvas.drawText("i: " + i, x * 0.2f + width / 2, y * 0.2f + height
-//					/ 2, linePainter);
-//			// System.out.println("i: " + i + " x Punkt: " +
-//			// (float)Math.sin(((double)i)/virtualButtons.size()*TWOPI) *
-//			// width);
-//
-//			canvas.drawText("Button: " + virtualButtons.get(i).getName(),
-//					(x + x1) * 0.2f + width / 2,
-//					(y + y1) * 0.2f + height / 2, linePainter);
-//		}
-
-		filledPainter.setColor(Color.WHITE);
-		// canvas.drawRect(0.05f * min, 0.05f * min, width- 0.05f * min, height
-		// - 0.05f * min, filledPainter);
+//		filledPainter.setColor(Color.WHITE);
 //		canvas.drawRect(BUTTON_SIZE * min, BUTTON_SIZE * min, width
 //				- BUTTON_SIZE * min, height - BUTTON_SIZE * min, linePainter);
-		filledPainter.setColor(Color.RED);
+//		filledPainter.setColor(Color.RED);
 
 	}
 }

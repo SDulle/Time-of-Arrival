@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.view.View;
 
 public class RadialButton {
@@ -104,6 +105,10 @@ public class RadialButton {
 	public void paint(Canvas canvas, Paint paint){
 		
 		canvas.drawPath(path, paint);
+		RectF bounds = new RectF();
+		path.computeBounds(bounds, false);
+		
+		canvas.drawText(name, bounds.centerX(), bounds.centerY(), paint);   
 	}
 	
 }
