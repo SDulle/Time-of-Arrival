@@ -82,7 +82,8 @@ public class BorderButtons extends View {
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		updateButtons();
-		// this.setThetaOffset(Math.atan(((double)h)/w)-0.2);
+		//this.setThetaOffset(Math.atan(((double) h) / w));
+		this.setThetaOffset(Math.PI/4.0);
 	}
 
 	public void updateButtons() {
@@ -243,19 +244,6 @@ public class BorderButtons extends View {
 		path.moveTo(startX + width / 2, startY + height / 2);
 		path.lineTo(x + width / 2, y + height / 2);
 
-		// if (Math.abs(x1 - x) >= min && min == getWidth()) {
-		// // Punkte oben unten einfügen
-		// path.lineTo(x1, y1);
-		//
-		// path.lineTo(x1 + width / 2, y1 + height / 2);
-		// path.lineTo(startX1 + width / 2, startY1 + height / 2);
-		//
-		// }
-		//
-		// if (Math.abs(y1 - y) >= min && min == getHeight()) {
-		//
-		// }
-
 		this.addCorners(path, (int) (x + width / 2), (int) (y + height / 2),
 				(int) (x1 + width / 2), (int) (y1 + height / 2), (int) width,
 				(int) height, 0, 0, false);
@@ -268,28 +256,6 @@ public class BorderButtons extends View {
 						- (int) (2 * BUTTON_SIZE * min),
 				(int) (BUTTON_SIZE * min), (int) (BUTTON_SIZE * min), true);
 
-		/*
-		 * if (x >= width / 2 && y1 <= -height / 2) { path.lineTo(width, 0);
-		 * path.lineTo(x1 + width / 2, y1 + height / 2); path.lineTo(startX1 +
-		 * width / 2, startY1 + height / 2); path.lineTo(width - min *
-		 * BUTTON_SIZE, min * BUTTON_SIZE);
-		 * 
-		 * } else if (x1 <= -width / 2 && y <= -height / 2) { path.lineTo(0, 0);
-		 * path.lineTo(x1 + width / 2, y1 + height / 2); path.lineTo(startX1 +
-		 * width / 2, startY1 + height / 2); path.lineTo(BUTTON_SIZE * min, min
-		 * * BUTTON_SIZE); } else if (x <= -width / 2 && y1 >= height / 2) {
-		 * path.lineTo(0, height); path.lineTo(x1 + width / 2, y1 + height / 2);
-		 * path.lineTo(startX1 + width / 2, startY1 + height / 2);
-		 * path.lineTo(BUTTON_SIZE * min, height - min * BUTTON_SIZE); } else if
-		 * (x1 >= width / 2 && y >= height / 2) { path.lineTo(width, height);
-		 * path.lineTo(x1 + width / 2, y1 + height / 2); path.lineTo(startX1 +
-		 * width / 2, startY1 + height / 2); path.lineTo(width - BUTTON_SIZE *
-		 * min, height - min * BUTTON_SIZE); } else {
-		 * 
-		 * path.lineTo(x1 + width / 2, y1 + height / 2); path.lineTo(startX1 +
-		 * width / 2, startY1 + height / 2); }
-		 */
-
 		path.lineTo(startX + width / 2, startY + height / 2);
 		path.close();
 		return path;
@@ -297,72 +263,75 @@ public class BorderButtons extends View {
 
 	private void addCorners(Path path, int startX, int startY, int endX,
 			int endY, int width, int height, int minX, int minY, boolean reverse) {
-		
+
 		boolean oneButton = (endY == startY && endX == startX);
 
 		ArrayList<PointF> linesTo = new ArrayList<PointF>();
 
-//		System.out.println("startX, " + startX + "endX: " + endX + " width: "
-//				+ width + " startY: " + startY + " endY: " + endY + " height: "
-//				+ height + " min: " + minX);
+		int start = -1;
+
+		// System.out.println("startX, " + startX + "endX: " + endX + " width: "
+		// + width + " startY: " + startY + " endY: " + endY + " height: "
+		// + height + " min: " + minX);
 
 		int x = startX;
 		int y = startY;
 
-		if (x == width + minX) {
-			for (int y1 = startY; y1 >= minY
-					&& (!(y1 == endY && x == endX)||oneButton); y1--) {
-				if (y1 == minY || y1 == height + minY) {
-					linesTo.add(new PointF(x, y1));
-				}
-				y = y1;
-			}
-			if (y < minY) {
-				y = minY;
-			}
-		}
+		for (int i = 0; i < 2; i++) {
 
-		if (y == minY) {
-			// System.out.println("X: " + x);
-			for (int x1 = x; x1 >= minX
-					&& (!(x1 == endX && y == endY) ||oneButton); x1--) {
-				if (x1 == minX || x1 == width + minX) {
-					linesTo.add(new PointF(x1, y));
+			if (x == width + minX) {
+				for (int y1 = startY; y1 >= minY
+						&& (!(y1 == endY && x == endX) || oneButton); y1--) {
+					if (y1 == minY || y1 == height + minY) {
+						linesTo.add(new PointF(x, y1));
+					}
+					y = y1;
 				}
-				x = x1;
+				if (y < minY) {
+					y = minY;
+				}
 			}
-			if (x < minX) {
-				x = minX;
-			}
-		}
 
-		if (x == minX) {
-			for (int y1 = startY; y1 <= height + minY
-					&& (!(y1 == endY && x == endX)||oneButton); y1++) {
-				if (y1 == minY || y1 == height + minY) {
-					linesTo.add(new PointF(x, y1));
-					//path.lineTo(x, y1);
+			if (y == minY) {
+				for (int x1 = x; x1 >= minX
+						&& (!(x1 == endX && y == endY) || oneButton); x1--) {
+					if (x1 == minX || x1 == width + minX) {
+						linesTo.add(new PointF(x1, y));
+					}
+					x = x1;
 				}
-				y = y1;
+				if (x < minX) {
+					x = minX;
+				}
 			}
-			if (y > height + minY) {
-				y = height + minY;
-			}
-		}
 
-		if (y == height + minY) {
-			for (int x1 = x; x1 <= width + minX
-					&& (!(x1 == endX && y == endY)||oneButton ); x1++) {
-				if (x1 == minX || x1 == width + minX) {
-					linesTo.add(new PointF(x1, y));
+			if (x == minX) {
+				for (int y1 = startY; y1 <= height + minY
+						&& (!(y1 == endY && x == endX) || oneButton); y1++) {
+					if (y1 == minY || y1 == height + minY) {
+						linesTo.add(new PointF(x, y1));
+						// path.lineTo(x, y1);
+					}
+					y = y1;
 				}
-				x = x1;
+				if (y > height + minY) {
+					y = height + minY;
+				}
 			}
-			if (x > width + minX) {
-				x = width + minX;
+
+			if (y == height + minY) {
+				for (int x1 = x; x1 <= width + minX
+						&& (!(x1 == endX && y == endY) || oneButton); x1++) {
+					if (x1 == minX || x1 == width + minX) {
+						linesTo.add(new PointF(x1, y));
+					}
+					x = x1;
+				}
+				if (x > width + minX) {
+					x = width + minX;
+				}
 			}
 		}
-		
 
 		if (reverse) {
 			for (int i = linesTo.size() - 1; i >= 0; i--) {
@@ -399,11 +368,6 @@ public class BorderButtons extends View {
 
 			paintIndex = -1;
 		}
-
-		// filledPainter.setColor(Color.WHITE);
-		// canvas.drawRect(BUTTON_SIZE * min, BUTTON_SIZE * min, width
-		// - BUTTON_SIZE * min, height - BUTTON_SIZE * min, linePainter);
-		// filledPainter.setColor(Color.RED);
 
 	}
 }
