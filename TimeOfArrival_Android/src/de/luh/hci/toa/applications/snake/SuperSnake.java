@@ -11,6 +11,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.Path.Op;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -20,6 +21,7 @@ import android.view.View.OnTouchListener;
 public class SuperSnake extends View {
 	
 	public static float SNAKE_MOVE_DIST = 50;
+	public static float SNAKE_HEAD_SIZE = 25;
 	
 	List<PointF> snake = new ArrayList<PointF>();
 	Path snakePath = new Path();
@@ -31,6 +33,8 @@ public class SuperSnake extends View {
 	
 	Paint snakePaint;
 	Paint foodPaint;
+	Paint textPaint;
+	Paint linePaint;
 
 	private boolean alive;
 	private int tickDelay;
@@ -40,7 +44,7 @@ public class SuperSnake extends View {
 		super(context);
 		
 		alive = true;
-		tickDelay = 150;
+		tickDelay = 100;
 		
 		gameLoop = new Handler();
 		gameLoop.post(new Runnable() {
@@ -72,32 +76,36 @@ public class SuperSnake extends View {
 		});
 		
 		snake.add(new PointF(20, 20));
-		addTail();
-		addTail();
-		addTail();
-		addTail();
-		addTail();
 		food = new PointF(100, 100);
 		
 		snakePaint = new Paint();
 		snakePaint.setStrokeWidth(SNAKE_MOVE_DIST/2);
 		snakePaint.setStrokeJoin(Join.ROUND);
-		snakePaint.setStrokeCap(Cap.BUTT);
+		snakePaint.setStrokeCap(Cap.ROUND);
 		snakePaint.setColor(Color.RED);
 		snakePaint.setStyle(Style.STROKE);
+		snakePaint.setAntiAlias(true);
 		
 		foodPaint = new Paint();
 		foodPaint.setColor(Color.GREEN);
+		
+		textPaint = new Paint();
+		textPaint.setColor(Color.WHITE);
+		textPaint.setTextSize(20);
+		
+		linePaint = new Paint();
+		linePaint.setColor(Color.BLUE);
+		linePaint.setStrokeWidth(15);
 	}
 	
 	
 	
 	public void tick() {
+		checkFood();
 		moveBody();
 		moveHead();
-		checkFood();
 		checkBounce();
-		//checkEat();
+		checkEat();
 	}
 	
 	public void checkBounce() {
@@ -125,12 +133,61 @@ public class SuperSnake extends View {
 	}
 	
 	public void checkEat() {
-		for(int i=1; i<snake.size(); ++i) {
-			if(distance(getHead(), snake.get(i)) < SNAKE_MOVE_DIST) {
-				end();
-			}
-		}
+		constructPath();
+		
+		if(checkIntersect()) end();
+		
 	}
+	
+	private boolean checkIntersect() {
+		for(int i=1; i<snake.size(); ++i) {
+			System.out.println(distance(getHead(), snake.get(i)));
+			if(distance(getHead(), snake.get(i)) < SNAKE_HEAD_SIZE) return true;
+		}
+		return false;
+	}
+//	
+//	private boolean checkIntersect() {
+//		for(int i=0; i<snake.size()-1; ++i) {
+//			if(checkIntersect(snake.get(i), snake.get(i+1))) return true;
+//		}
+//		
+//		return false;
+//	}
+//	
+//	private boolean checkIntersect(PointF p1, PointF p2) {
+//		for(int i=0; i<snake.size()-1; ++i) {
+//			
+//			if(checkIntersect(p1, p2, snake.get(i), snake.get(i+1))) return true;
+//		}
+//		
+//		return false;
+//	}
+//	
+//	private boolean checkIntersect(PointF p1, PointF p2, PointF q1, PointF q2) {
+//		
+//		float xMin_p = Math.min(p1.x, p2.x);
+//		float xMax_p = Math.max(p1.x, p2.x);
+//		float yMin_p = Math.min(p1.y, p2.y);
+//		float yMax_p = Math.max(p1.y, p2.y);
+//		
+//		float xMin_q = Math.min(q1.x, q2.x);
+//		float xMax_q = Math.max(q1.x, q2.x);
+//		float yMin_q = Math.min(q1.y, q2.y);
+//		float yMax_q = Math.max(q1.y, q2.y);
+//		
+//		if(xMax_q < xMin_p) return false;
+//		if(yMax_q < yMin_p) return false;
+//		if(xMin_q > xMax_p) return false;
+//		if(yMin_q > yMax_p) return false;
+//		
+//		return (test2(p1, p2, q1) * test2(p1, p2, q2)) <= 0 &&
+//			   (test2(q1, q2, p1) * test2(q1, q2, p2)) <= 0;
+//	}
+//	
+//	private float test2(PointF o, PointF p, PointF q) {
+//		return (p.x-o.x)*(q.y-o.y) - (p.y-o.y)*(q.x-o.x);
+//	}
 	
 	public static double distance(PointF p1, PointF p2) {
 		float dx = p1.x - p2.x;
@@ -186,18 +243,34 @@ public class SuperSnake extends View {
 		}
 	}
 	
-	@Override
-	protected void onDraw(Canvas canvas) {
-		
+	public Path constructPath() {
 		snakePath.rewind();
 		snakePath.moveTo(snake.get(0).x, snake.get(0).y);
 		for(PointF p: snake) {
 			snakePath.lineTo(p.x, p.y);
-			//canvas.drawCircle(p.x, p.y, 20, snakePaint);
 		}
+		
+		return snakePath;
+	}
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		
+		constructPath();
 		
 		canvas.drawCircle(food.x, food.y, 10, foodPaint);
 		
 		canvas.drawPath(snakePath, snakePaint);
+		
+		canvas.drawCircle(getHead().x, getHead().y, SNAKE_HEAD_SIZE, snakePaint);
+		
+		canvas.drawLine(
+				getHead().x, 
+				getHead().y, 
+				getHead().x+snakeHeadingX,
+				getHead().y+snakeHeadingY, 
+				linePaint);
+		
+		canvas.drawText("SCORE: "+snake.size(), 20, 20, textPaint);
 	}
 }
