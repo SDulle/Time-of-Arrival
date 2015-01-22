@@ -2,6 +2,7 @@ package de.luh.hci.toa.applications.borderbuttons;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,14 +13,22 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
-public class BorderButtons extends View {
+@SuppressLint("WrongCall")
+public class BorderButtons extends ViewGroup {
+	int width  = 0;
+	int height = 0;
+	int min = 0;
 
 	private ArrayList<RadialButton> virtualButtons = new ArrayList<RadialButton>();
 
 	private double thetaOffset = 0.0;
 	// in percent of Screen.
 	private static final float BUTTON_SIZE = 0.05f;
+
 
 	Handler handler = new Handler();
 
@@ -56,6 +65,7 @@ public class BorderButtons extends View {
 		filledPainter.setColor(Color.RED);
 		filledPainter.setStyle(Paint.Style.FILL);
 		filledPainter.setAntiAlias(true);
+		this.setWillNotDraw(false);
 
 		// Buttons kreieren
 		for (int i = 0; i < 4; i++) {
@@ -72,18 +82,20 @@ public class BorderButtons extends View {
 
 				// Minus ist wichtig
 				input(-a);
+				
+				System.out.println("TOUCH");
+				
+				
+				
 				return true;
 			}
 		});
-
 	}
 
 	@Override
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		updateButtons();
-		//this.setThetaOffset(Math.atan(((double) h) / w));
-		this.setThetaOffset(Math.PI/4.0);
+		updateButtons();		
 	}
 
 	public void updateButtons() {
@@ -94,7 +106,6 @@ public class BorderButtons extends View {
 			virtualButtons.get(i).updatePositions(path);
 		}
 	}
-
 	@Override
 	public boolean performClick() {
 		return super.performClick();
@@ -115,11 +126,12 @@ public class BorderButtons extends View {
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			if (virtualButtons.get(i).checkClick(theta)) {
 				paintIndex = i;
-				// System.out.println("Button matched: " + i + " with Theta: "
-				// + theta);
+				 System.out.println("Button matched: " + i + " with Theta: "
+				 + theta);
 				break;
 			}
 		}
+		this.invalidate();
 	}
 
 	public void addVirtualButton(String text) {
@@ -268,8 +280,6 @@ public class BorderButtons extends View {
 
 		ArrayList<PointF> linesTo = new ArrayList<PointF>();
 
-		int start = -1;
-
 		// System.out.println("startX, " + startX + "endX: " + endX + " width: "
 		// + width + " startY: " + startY + " endY: " + endY + " height: "
 		// + height + " min: " + minX);
@@ -347,16 +357,14 @@ public class BorderButtons extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-
 		canvas.drawColor(Color.WHITE);
-
+		super.onDraw(canvas);
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			virtualButtons.get(i).paint(canvas, linePainter);
 		}
 
-		int width = canvas.getWidth();
-		int height = canvas.getHeight();
+		width = canvas.getWidth();
+		height = canvas.getHeight();
 
 		int min = Math.min(width, height);
 
@@ -369,5 +377,17 @@ public class BorderButtons extends View {
 			paintIndex = -1;
 		}
 
+	}
+
+	@Override
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		width = r-l;
+		height = b-t;
+		min = Math.min(width, height);
+		
+		if(this.getChildCount()>0){
+			this.getChildAt(0).layout((int)(l + BUTTON_SIZE *min),(int)( t + BUTTON_SIZE *min), (int)(r- BUTTON_SIZE *min), (int)(b- BUTTON_SIZE *min));
+		}
+		
 	}
 }
