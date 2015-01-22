@@ -105,7 +105,7 @@ public class SuperSnake extends View {
 		moveBody();
 		moveHead();
 		checkBounce();
-		checkEat();
+		//checkEat();
 	}
 	
 	public void checkBounce() {

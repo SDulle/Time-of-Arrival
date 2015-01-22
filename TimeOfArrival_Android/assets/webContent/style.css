@@ -6,14 +6,33 @@ body {
 #wrapper {
     position: relative;
     width: 100%;
+    margin-top: 0px;
+
 }
 
 #wrapper ul {
     width: 100%;
     position: relative;
+    heigth: 100%;
+    margin: 0px;
 }
 
-#wrapper ul li {
 
+
+#wrapper img {
+    display: block;
+    width: auto;
+    heigth: 100%;
     margin: 0 auto;
+
+}
+
+.bx-viewport {
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+}
+
+.bxslider {
+    padding: 0px;;
 }

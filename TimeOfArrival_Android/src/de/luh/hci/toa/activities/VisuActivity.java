@@ -27,9 +27,8 @@ public class VisuActivity extends Activity implements TapListener {
 		visu = new Visu(this);
 		
 		MainActivity.instance.tapReceiver.addTapListener(this);
-		//setContentView(visu);
-		
-		setContentView(new WebViewport(this));
+		setContentView(visu);
+		//setContentView(new WebViewport(this));
 	}
 	
 	@Override

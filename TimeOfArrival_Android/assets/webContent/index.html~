@@ -3,7 +3,7 @@
 <head>
 <script src="jquery-1.11.2.min.js"></script>
 <script src="jquery.bxslider.js"></script>
-<link rel="stylesheet" type="text/css" href="stlye.css">
+<link rel="stylesheet" type="text/css" href="style.css">
 
 
 </head>
