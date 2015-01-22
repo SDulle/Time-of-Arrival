@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    width: 100%;
+}
+
+#wrapper {
+    position: relative;
+    width: 100%;
+}
+
+#wrapper ul {
+    width: 100%;
+    position: relative;
+}
+
+#wrapper ul li {
+
+    margin: 0 auto;
+}

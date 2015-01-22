@@ -234,7 +234,12 @@ public class Tetris extends View {
 			return;
 		}
 		
-		canvas.drawRect(x*size, y*size, x*size+size, y*size+size, Tetromino.getColor(block));
+		Paint p = new Paint();
+		p.setColor(Color.BLACK);
+		
+		canvas.drawRect(x*size, y*size, x*size+size, y*size+size, p);
+		
+		canvas.drawRect(x*size+1, y*size+1, x*size+size-1, y*size+size-1, Tetromino.getColor(block));
 	}
 
 

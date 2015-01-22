@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="jquery-1.11.2.min.js"></script>
+<script src="jquery.bxslider.js"></script>
+<link rel="stylesheet" type="text/css" href="stlye.css">
+
+
+</head>
+
+<body>
+<div id="wrapper">
+<ul class="bxslider">
+  <li><img src="1.jpg" /></li>
+  <li><img src="2.jpg" /></li>
+  <li><img src="3.jpg" /></li>
+</ul>
+
+</div>
+
+<div class="hidden" style="display: none">
+ 	<span id="slider-prev"></span> 
+	<span id="slider-next"></span>
+</div>
+
+
+<script>
+$('.bxslider').bxSlider({
+  	minSlides: 1,
+	maxSlides: 1,
+	pager: false,
+  	nextSelector: '#slider-next',
+  	prevSelector: '#slider-prev',
+  	nextText: '',
+  	prevText: ''
+});
+
+
+function next() {
+	$('.bx-next').trigger('click');
+}
+
+function prev() {
+	$('.bx-prev').trigger('click');
+}
+
+
+</script>
+
+</body>
+</html>
