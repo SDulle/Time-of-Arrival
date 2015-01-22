@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+import android.webkit.WebView;
+import de.luh.hci.toa.applications.WebViewport;
 import de.luh.hci.toa.applications.visu.Visu;
 import de.luh.hci.toa.network.TapListener;
 
@@ -25,7 +27,9 @@ public class VisuActivity extends Activity implements TapListener {
 		visu = new Visu(this);
 		
 		MainActivity.instance.tapReceiver.addTapListener(this);
-		setContentView(visu);
+		//setContentView(visu);
+		
+		setContentView(new WebViewport(this));
 	}
 	
 	@Override
