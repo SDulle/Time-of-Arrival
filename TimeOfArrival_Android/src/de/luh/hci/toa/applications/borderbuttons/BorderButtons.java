@@ -14,8 +14,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 
 @SuppressLint("WrongCall")
 public class BorderButtons extends ViewGroup {
@@ -28,7 +26,6 @@ public class BorderButtons extends ViewGroup {
 	private double thetaOffset = 0.0;
 	// in percent of Screen.
 	private static final float BUTTON_SIZE = 0.05f;
-
 
 	Handler handler = new Handler();
 
@@ -50,6 +47,9 @@ public class BorderButtons extends ViewGroup {
 	 */
 	public void setThetaOffset(double thetaOffset) {
 		this.thetaOffset = thetaOffset % TWOPI;
+		if(thetaOffset < 0){
+			thetaOffset = thetaOffset + TWOPI;
+		}
 		this.updateButtons();
 	}
 
@@ -67,26 +67,19 @@ public class BorderButtons extends ViewGroup {
 		filledPainter.setAntiAlias(true);
 		this.setWillNotDraw(false);
 
-		// Buttons kreieren
-		for (int i = 0; i < 4; i++) {
-			this.addVirtualButton("" + i);
-		}
+//		// Buttons kreieren
+//		for (int i = 0; i < 4; i++) {
+//			this.addVirtualButton("" + i);
+//		}
 
 		setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				float x = event.getX();
 				float y = event.getY();
-
 				double a = Math.atan2(y - getHeight() / 2, x - getWidth() / 2);
-
 				// Minus ist wichtig
 				input(-a);
-				
-				System.out.println("TOUCH");
-				
-				
-				
 				return true;
 			}
 		});
@@ -363,10 +356,10 @@ public class BorderButtons extends ViewGroup {
 			virtualButtons.get(i).paint(canvas, linePainter);
 		}
 
-		width = canvas.getWidth();
-		height = canvas.getHeight();
-
-		int min = Math.min(width, height);
+//		int width = canvas.getWidth();
+//		int height = canvas.getHeight();
+//
+//		int min = Math.min(width, height);
 
 		if (paintIndex != -1) {
 

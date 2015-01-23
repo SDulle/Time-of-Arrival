@@ -7,6 +7,8 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import de.luh.hci.toa.applications.borderbuttons.BorderButtons;
 import de.luh.hci.toa.applications.borderbuttons.FrameLayoutBB;
+import de.luh.hci.toa.applications.borderbuttons.IRadialButtonClickHandler;
+import de.luh.hci.toa.applications.borderbuttons.RadialButton;
 import de.luh.hci.toa.applications.hockey.Hockey;
 import de.luh.hci.toa.applications.tetris.Tetris;
 import de.luh.hci.toa.applications.visu.Visu;
@@ -31,12 +33,30 @@ public class ButtonExample extends Activity implements TapListener {
 		visu = new Visu(this);
 		hockey =new Hockey(this);
 		bb = new BorderButtons(this, null);
-		webViewPort = new WebViewport(this);
+		//webViewPort = new WebViewport(this);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		MainActivity.instance.tapReceiver.addTapListener(this);
-		bb.addView(hockey);
-		setContentView(tetris);
+		
+		
+		//bb.addView(tetris);
+		bb.setThetaOffset(3.0);
+		
+		
+		
+		
+		//Tetris Sample
+		RadialButton left = new RadialButton("Links", (IRadialButtonClickHandler) tetris );
+		RadialButton turnLeft = new RadialButton("Links drehen", (IRadialButtonClickHandler) tetris );
+		RadialButton right = new RadialButton("Rechts", (IRadialButtonClickHandler) tetris );
+		RadialButton turnRight = new RadialButton("Rechts drehen", (IRadialButtonClickHandler) tetris );
+		//RadialButton firstButton = new RadialButton("Test", (IRadialButtonClickHandler) tetris);
+		bb.addVirtualButton(right);
+		bb.addVirtualButton(left);
+		bb.addVirtualButton(turnLeft);
+		//bb.addVirtualButton(turnRight);
+		
+		setContentView(bb);
 
 	}
 

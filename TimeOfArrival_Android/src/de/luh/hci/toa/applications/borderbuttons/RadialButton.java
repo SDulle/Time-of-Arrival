@@ -20,6 +20,11 @@ public class RadialButton {
 	View view;
 	Path path = new Path();
 	String name;
+	
+	double thetaMin;
+	double thetaMax;
+	
+	private IRadialButtonClickHandler clickHandler;
 	/**
 	 * @param thetaMin the thetaMin to set
 	 */
@@ -27,25 +32,26 @@ public class RadialButton {
 		this.thetaMin = thetaMin;
 	}
 
-
-
 	/**
 	 * @param thetaMax the thetaMax to set
 	 */
 	public void setThetaMax(double thetaMax) {
 		this.thetaMax = thetaMax;
-	}
-
-	double thetaMin;
-	double thetaMax;
-	
-	private IRadialButtonClickHandler clickHandler;
+	}	
 	
 	public RadialButton(String name){
 		this.name = name;
+		clickHandler = null;
 	}
 	
+	public RadialButton(String name, IRadialButtonClickHandler clickHandler){
+		this.name = name;
+		this.clickHandler = clickHandler;
+	}
 	
+	public void setClickHandler(IRadialButtonClickHandler clickHandler){
+		this.clickHandler = clickHandler;
+	}
 	
 	public void updatePositions(ArrayList<PointF> positionList){
 		Path path = new Path();
@@ -102,8 +108,7 @@ public class RadialButton {
 		return true;
 	}
 	
-	public void paint(Canvas canvas, Paint paint){
-		
+	public void paint(Canvas canvas, Paint paint){	
 		canvas.drawPath(path, paint);
 		RectF bounds = new RectF();
 		path.computeBounds(bounds, false);

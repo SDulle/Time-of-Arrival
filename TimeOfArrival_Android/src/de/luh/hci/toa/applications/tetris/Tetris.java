@@ -1,5 +1,7 @@
 package de.luh.hci.toa.applications.tetris;
 
+import de.luh.hci.toa.applications.borderbuttons.IRadialButtonClickHandler;
+import de.luh.hci.toa.applications.borderbuttons.RadialButtonEvent;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,7 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class Tetris extends View {
+public class Tetris extends View implements IRadialButtonClickHandler {
 
 	int width = 10;
 	int heigth = 20;
@@ -31,19 +33,19 @@ public class Tetris extends View {
 
 	Paint black = new Paint();
 	Paint white = new Paint();
-	
+
 	public Tetris(Context context) {
 		super(context);
 
 		black.setColor(Color.BLACK);
 		white.setColor(Color.WHITE);
-		
+
 		loop.post(new Runnable() {
 
 			@Override
 			public void run() {
 
-				if(alive) {
+				if (alive) {
 					tick();
 					invalidate();
 					loop.postDelayed(this, 400);
@@ -56,12 +58,13 @@ public class Tetris extends View {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 
-				if((event.getAction() == MotionEvent.ACTION_DOWN)) {
+				if ((event.getAction() == MotionEvent.ACTION_DOWN)) {
 
 					float x = event.getX();
 					float y = event.getY();
 
-					double a = Math.atan2(y-getHeight()/2, x-getWidth()/2);
+					double a = Math.atan2(y - getHeight() / 2, x - getWidth()
+							/ 2);
 
 					input(-a);
 					return true;
@@ -72,40 +75,47 @@ public class Tetris extends View {
 		});
 
 		spawn();
-		
+
 	}
-	
+
 	public void end() {
 		alive = false;
 	}
 
 	public void spawn() {
-		cursX = (int)(Math.random()*7);
+		cursX = (int) (Math.random() * 7);
 		cursY = 0;
 		tetromino = Tetromino.random();
 		tetrominoIndex = 0;
 
-		if(tetromino[0].length == 16) tetrominoSize = 4;
-		else if(tetromino[0].length == 9) tetrominoSize = 3;
-		else tetrominoSize = 2;
+		if (tetromino[0].length == 16)
+			tetrominoSize = 4;
+		else if (tetromino[0].length == 9)
+			tetrominoSize = 3;
+		else
+			tetrominoSize = 2;
 
-		if(isStuck()) die();
+		if (isStuck())
+			die();
 	}
 
 	public void input(double a) {
-		if(alive) {
-			
-			if(a < 0) {
-				if(-a<Math.PI/3) moveRight();
-				else if(-a>2*Math.PI/3) moveLeft();
-				//else drop();
+		if (alive) {
+
+			if (a < 0) {
+				if (-a < Math.PI / 3)
+					moveRight();
+				else if (-a > 2 * Math.PI / 3)
+					moveLeft();
+				// else drop();
 			} else {
-				if(a<Math.PI/3) turnRight();
-				else if(a>2*Math.PI/3) turnLeft();
-				//else pause();
+				if (a < Math.PI / 3)
+					turnRight();
+				else if (a > 2 * Math.PI / 3)
+					turnLeft();
+				// else pause();
 			}
 
-			
 			postInvalidate();
 		}
 	}
@@ -118,129 +128,155 @@ public class Tetris extends View {
 
 	public void moveLeft() {
 		cursX--;
-		if(isStuck()) moveRight();
+		if (isStuck())
+			moveRight();
 	}
 
 	public void moveRight() {
 		cursX++;
-		if(isStuck()) moveLeft();
+		if (isStuck())
+			moveLeft();
 	}
 
 	public void turnLeft() {
 		tetrominoIndex--;
-		if(tetrominoIndex<0) tetrominoIndex+=4;
-		
-		if(isStuck()) turnRight();
+		if (tetrominoIndex < 0)
+			tetrominoIndex += 4;
+
+		if (isStuck())
+			turnRight();
 	}
 
 	public void turnRight() {
 		tetrominoIndex++;
-		if(tetrominoIndex>3) tetrominoIndex-=4;
+		if (tetrominoIndex > 3)
+			tetrominoIndex -= 4;
 
-		if(isStuck()) turnLeft();
+		if (isStuck())
+			turnLeft();
 	}
 
 	private boolean isStuck() {
-		for(int x=0; x<tetrominoSize; ++x) {
-			for(int y=0; y<tetrominoSize; ++y) {
-				int t = tetromino[tetrominoIndex][y*tetrominoSize+x];
-				if(t==0) continue;
+		for (int x = 0; x < tetrominoSize; ++x) {
+			for (int y = 0; y < tetrominoSize; ++y) {
+				int t = tetromino[tetrominoIndex][y * tetrominoSize + x];
+				if (t == 0)
+					continue;
 
-				if(cursY+y >= heigth || cursX+x >= width || cursY+y < 0 || cursX+x < 0) return true;
+				if (cursY + y >= heigth || cursX + x >= width || cursY + y < 0
+						|| cursX + x < 0)
+					return true;
 
-				if(blocks[cursY+y][cursX+x]>0) return true;
+				if (blocks[cursY + y][cursX + x] > 0)
+					return true;
 			}
 		}
 		return false;
 	}
 
 	private void pasteBlocks() {
-		for(int x=0; x<tetrominoSize; ++x) {
-			for(int y=0; y<tetrominoSize; ++y) {
-				int t = tetromino[tetrominoIndex][y*tetrominoSize+x];
-				if(t>0)
-					blocks[cursY+y][cursX+x] = t;
+		for (int x = 0; x < tetrominoSize; ++x) {
+			for (int y = 0; y < tetrominoSize; ++y) {
+				int t = tetromino[tetrominoIndex][y * tetrominoSize + x];
+				if (t > 0)
+					blocks[cursY + y][cursX + x] = t;
 			}
 		}
 	}
 
 	public void deleteRow(int row) {
-		for(int i=row-1; i>=0; --i) {
-			System.arraycopy(blocks[i], 0, blocks[i+1], 0, width);
+		for (int i = row - 1; i >= 0; --i) {
+			System.arraycopy(blocks[i], 0, blocks[i + 1], 0, width);
 		}
 	}
 
 	private void check() {
-		for(int i=0; i<heigth; ++i) {
-			if(rowFull(i)) {
+		for (int i = 0; i < heigth; ++i) {
+			if (rowFull(i)) {
 				deleteRow(i);
-				//TODO add score
-				System.out.println("row "+i+" full");
+				// TODO add score
+				System.out.println("row " + i + " full");
 			}
 		}
 	}
-	
+
 	private boolean rowFull(int row) {
-		for(int i=0; i<width; ++i) {
-			if(blocks[row][i] == 0) return false;
+		for (int i = 0; i < width; ++i) {
+			if (blocks[row][i] == 0)
+				return false;
 		}
-		
+
 		return true;
 	}
 
 	public void tick() {
 		cursY++;
 
-		if(isStuck()) {
+		if (isStuck()) {
 			cursY--;
 			pasteBlocks();
-			
+
 			check();
 			spawn();
 		}
 	}
-	
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		
+
 		canvas.drawColor(Color.BLACK);
-		
-		for(int y=0; y<heigth; ++y) {
-			for(int x=0; x<width; ++x) {
+
+		for (int y = 0; y < heigth; ++y) {
+			for (int x = 0; x < width; ++x) {
 				int t = blocks[y][x];
 				drawBlock(canvas, t, x, y);
 			}
 		}
-		
-		for(int y=0; y<tetrominoSize; ++y) {
-			for(int x=0; x<tetrominoSize; ++x) {
-				int t = tetromino[tetrominoIndex][y*tetrominoSize+x];
 
-				if(t>0) {
-					drawBlock(canvas, t, cursX+x, cursY+y);
+		for (int y = 0; y < tetrominoSize; ++y) {
+			for (int x = 0; x < tetrominoSize; ++x) {
+				int t = tetromino[tetrominoIndex][y * tetrominoSize + x];
+
+				if (t > 0) {
+					drawBlock(canvas, t, cursX + x, cursY + y);
 				}
 			}
 		}
-		
-		
+
 	}
 
 	private void drawBlock(Canvas canvas, int block, int x, int y) {
-		float size = getHeight()/heigth;
-		
-		if(block == 0) {
-			canvas.drawRect(x*size, y*size, x*size+size, y*size+size, Tetromino.NO_COLOR);
+		float size = getHeight() / heigth;
+
+		if (block == 0) {
+			canvas.drawRect(x * size, y * size, x * size + size, y * size
+					+ size, Tetromino.NO_COLOR);
 			return;
 		}
-		
+
 		Paint p = new Paint();
 		p.setColor(Color.BLACK);
-		
-		canvas.drawRect(x*size, y*size, x*size+size, y*size+size, p);
-		
-		canvas.drawRect(x*size+1, y*size+1, x*size+size-1, y*size+size-1, Tetromino.getColor(block));
+
+		canvas.drawRect(x * size, y * size, x * size + size, y * size + size, p);
+
+		canvas.drawRect(x * size + 1, y * size + 1, x * size + size - 1, y
+				* size + size - 1, Tetromino.getColor(block));
 	}
 
+	@Override
+	public void performClick(RadialButtonEvent event) {
+		if (event.button.getName().equals("Rechts")) {
+			moveRight();
+
+		} else if (event.button.getName().equals("Rechts drehen")) {
+			turnRight();
+		} else if (event.button.getName().equals("Links drehen")) {
+			turnLeft();
+		} else if (event.button.getName().equals("Links")) {
+			moveLeft();
+		}
+		// this.input( - (event.theta)+Math.PI);
+	}
 
 }
