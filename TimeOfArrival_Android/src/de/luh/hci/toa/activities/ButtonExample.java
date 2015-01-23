@@ -11,6 +11,7 @@ import de.luh.hci.toa.applications.borderbuttons.RadialButton;
 import de.luh.hci.toa.applications.hockey.Hockey;
 import de.luh.hci.toa.applications.tetris.Tetris;
 import de.luh.hci.toa.applications.visu.Visu;
+import de.luh.hci.toa.applications.webapp.WebViewport;
 import de.luh.hci.toa.network.TapListener;
 
 public class ButtonExample extends Activity implements TapListener {
@@ -31,14 +32,14 @@ public class ButtonExample extends Activity implements TapListener {
 		visu = new Visu(this);
 		hockey =new Hockey(this);
 		bb = new BorderButtons(this, null);
-		//webViewPort = new WebViewport(this);
+		webViewPort = new WebViewport(this);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		MainActivity.instance.tapReceiver.addTapListener(this);
 		
 		
-		//bb.addView(tetris);
-		bb.setThetaOffset(3.0);
+		bb.addView(webViewPort);
+		bb.setThetaOffset(0.0);
 		
 		
 		
@@ -52,7 +53,7 @@ public class ButtonExample extends Activity implements TapListener {
 		bb.addVirtualButton(right);
 		bb.addVirtualButton(left);
 		bb.addVirtualButton(turnLeft);
-		//bb.addVirtualButton(turnRight);
+		bb.addVirtualButton(turnRight);
 		
 		setContentView(bb);
 
