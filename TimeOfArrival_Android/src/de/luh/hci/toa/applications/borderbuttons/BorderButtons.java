@@ -2,7 +2,6 @@ package de.luh.hci.toa.applications.borderbuttons;
 
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-@SuppressLint("WrongCall")
+
 public class BorderButtons extends ViewGroup {
 	int width  = 0;
 	int height = 0;

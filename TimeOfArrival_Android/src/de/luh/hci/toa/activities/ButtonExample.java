@@ -6,20 +6,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import de.luh.hci.toa.applications.borderbuttons.BorderButtons;
-import de.luh.hci.toa.applications.borderbuttons.FrameLayoutBB;
 import de.luh.hci.toa.applications.borderbuttons.IRadialButtonClickHandler;
 import de.luh.hci.toa.applications.borderbuttons.RadialButton;
 import de.luh.hci.toa.applications.hockey.Hockey;
 import de.luh.hci.toa.applications.tetris.Tetris;
 import de.luh.hci.toa.applications.visu.Visu;
-import de.luh.hci.toa.applications.webapp.WebViewport;
 import de.luh.hci.toa.network.TapListener;
 
 public class ButtonExample extends Activity implements TapListener {
 
 	BorderButtons bb;
 	RelativeLayout frameLayout;
-	FrameLayoutBB layout;
+	
 	View tetris;
 	View visu;
 	View hockey;
