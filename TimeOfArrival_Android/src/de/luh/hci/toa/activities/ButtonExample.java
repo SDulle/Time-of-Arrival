@@ -19,10 +19,10 @@ public class ButtonExample extends Activity implements TapListener {
 	BorderButtons bb;
 	RelativeLayout frameLayout;
 	
-	View tetris;
-	View visu;
-	View hockey;
-	View webViewPort; 
+	Tetris tetris;
+	Visu visu;
+	Hockey hockey;
+	WebViewport webViewPort; 
 
 
 	@Override
@@ -45,10 +45,10 @@ public class ButtonExample extends Activity implements TapListener {
 		
 		
 		//Tetris Sample
-		RadialButton left = new RadialButton("Links", (IRadialButtonClickHandler) tetris );
-		RadialButton turnLeft = new RadialButton("Links drehen", (IRadialButtonClickHandler) tetris );
-		RadialButton right = new RadialButton("Rechts", (IRadialButtonClickHandler) tetris );
-		RadialButton turnRight = new RadialButton("Rechts drehen", (IRadialButtonClickHandler) tetris );
+		RadialButton left = new RadialButton("Links", tetris );
+		RadialButton turnLeft = new RadialButton("Links drehen", tetris );
+		RadialButton right = new RadialButton("Rechts", tetris );
+		RadialButton turnRight = new RadialButton("Rechts drehen", tetris );
 		//RadialButton firstButton = new RadialButton("Test", (IRadialButtonClickHandler) tetris);
 		bb.addVirtualButton(right);
 		bb.addVirtualButton(left);

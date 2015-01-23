@@ -1,10 +1,12 @@
 package de.luh.hci.toa.applications.webapp;
 
+import de.luh.hci.toa.applications.borderbuttons.IRadialButtonClickHandler;
+import de.luh.hci.toa.applications.borderbuttons.RadialButtonEvent;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
-public class WebViewport extends WebView {
+public class WebViewport extends WebView implements IRadialButtonClickHandler {
 	
 	public WebViewport(Context context) {
 		super(context);
@@ -41,5 +43,16 @@ public class WebViewport extends WebView {
 	
 	public void right() {
 		loadUrl("javascript:next()");
+	}
+
+	@Override
+	public void performClick(RadialButtonEvent event) {
+		if(event.button.getName().equals("left")) {
+			left();
+		} else if(event.button.getName().equals("right")) {
+			right();
+		} else {
+			System.err.println("FUCK MAN!");
+		}
 	}
 }
