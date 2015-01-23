@@ -123,4 +123,14 @@
         android:onClick="startHockey"
         android:text="Hockey" />
 
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/Button01"
+        android:onClick="startWebView"
+        android:text="WebView" />
+
 </RelativeLayout>

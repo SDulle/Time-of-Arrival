@@ -74,6 +74,11 @@ public class MainActivity extends Activity {
 		Intent hockeyIntent = new Intent(this, HockeyActivity.class);
 		startActivity(hockeyIntent);
 	}
+	
+	public void startWebView(View view) {
+		Intent webViewIntent = new Intent(this, WebViewActivity.class);
+		startActivity(webViewIntent);
+	}
 
 	public void connect(View view) {
 

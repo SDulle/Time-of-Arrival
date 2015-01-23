@@ -52,6 +52,12 @@
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             >
         </activity>
+        <activity
+            android:name="de.luh.hci.toa.activities.WebViewActivity"
+            android:label="WebViewActivity" 
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            >
+        </activity>
     </application>
 
 </manifest>
