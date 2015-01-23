@@ -32,13 +32,13 @@ public class ButtonExample extends Activity implements TapListener {
 		visu = new Visu(this);
 		hockey =new Hockey(this);
 		bb = new BorderButtons(this, null);
-		webViewPort = new WebViewport(this);
+		
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		MainActivity.instance.tapReceiver.addTapListener(this);
 		
 		
-		bb.addView(webViewPort);
+		bb.addView(tetris);
 		bb.setThetaOffset(0.0);
 		
 		
