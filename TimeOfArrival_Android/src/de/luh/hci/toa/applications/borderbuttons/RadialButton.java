@@ -85,7 +85,7 @@ public class RadialButton {
 			else{
 				System.err.println("Empty Clickhandler");
 			}
-			view.invalidate();
+			view.postInvalidate();
 			return true;
 		}
 		return false;

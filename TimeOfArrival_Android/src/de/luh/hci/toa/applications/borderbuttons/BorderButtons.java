@@ -31,7 +31,7 @@ public class BorderButtons extends ViewGroup {
 	Runnable r = new Runnable() {
 
 		public void run() {
-			invalidate();
+			postInvalidate();
 		}
 	};
 
@@ -123,7 +123,7 @@ public class BorderButtons extends ViewGroup {
 				break;
 			}
 		}
-		this.invalidate();
+		postInvalidate();
 	}
 
 	public void addVirtualButton(String text) {
@@ -139,13 +139,13 @@ public class BorderButtons extends ViewGroup {
 			vButton.setThetaMax((i + 1) * TWOPI / virtualButtons.size());
 		}
 		// invalidate View because a new Button was added.
-		this.invalidate();
+		postInvalidate();
 	}
 
 	public void removeVirtualButton(RadialButton button) {
 		virtualButtons.remove(button);
 		// invalidate View because a Button was removed.
-		this.invalidate();
+		postInvalidate();
 	}
 
 	public int getVirtualButtonCount() {
