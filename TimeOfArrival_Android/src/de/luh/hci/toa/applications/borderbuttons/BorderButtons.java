@@ -120,6 +120,7 @@ public class BorderButtons extends ViewGroup {
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			if (virtualButtons.get(i).checkClick(theta)) {
 				paintIndex = i;
+				virtualButtons.get(i).setPressed();
 				System.out.println("Button matched: " + i + " with Theta: "
 						+ theta);
 				break;
@@ -363,8 +364,8 @@ public class BorderButtons extends ViewGroup {
 
 		if (paintIndex != -1) {
 
-			virtualButtons.get(paintIndex).paint(canvas, filledPainter);
-			handler.removeCallbacks(r);
+//
+//			handler.removeCallbacks(r);
 			handler.postDelayed(r, 1000);
 
 			paintIndex = -1;

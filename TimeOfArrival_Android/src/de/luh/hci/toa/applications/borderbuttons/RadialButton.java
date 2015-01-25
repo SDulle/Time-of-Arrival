@@ -3,6 +3,7 @@ package de.luh.hci.toa.applications.borderbuttons;
 import java.util.ArrayList;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -36,6 +37,11 @@ public class RadialButton {
 	double thetaMin;
 	double thetaMax;
 	View view;
+	long pressedTime;
+	
+	public void setPressed(){
+		pressedTime = System.currentTimeMillis() + 1000;
+	}
 
 	/**
 	 * @param view
@@ -172,7 +178,14 @@ public class RadialButton {
 	}
 
 	public void paint(Canvas canvas, Paint paint) {
-		canvas.drawPath(path, paint);
+		
+		if(this.pressedTime > System.currentTimeMillis()){
+			filledPainter.setColor(Color.BLUE);
+		}
+		
+		canvas.drawPath(path, filledPainter);
+		filledPainter.setColor(Color.WHITE);
+		
 		canvas.drawPath(path, linePainter);
 
 		if (turnText != 0) {
