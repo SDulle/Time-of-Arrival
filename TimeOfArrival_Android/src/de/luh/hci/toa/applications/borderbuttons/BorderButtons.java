@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -14,9 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 public class BorderButtons extends ViewGroup {
-	int width  = 0;
+	int width = 0;
 	int height = 0;
 	int min = 0;
 
@@ -46,7 +44,7 @@ public class BorderButtons extends ViewGroup {
 	 */
 	public void setThetaOffset(double thetaOffset) {
 		this.thetaOffset = thetaOffset % TWOPI;
-		if(thetaOffset < 0){
+		if (thetaOffset < 0) {
 			thetaOffset = thetaOffset + TWOPI;
 		}
 		this.updateButtons();
@@ -59,6 +57,7 @@ public class BorderButtons extends ViewGroup {
 		linePainter.setColor(Color.BLACK);
 		linePainter.setAntiAlias(true);
 		linePainter.setStyle(Paint.Style.STROKE);
+		linePainter.setTextSize(18);
 
 		filledPainter = new Paint();
 		filledPainter.setColor(Color.RED);
@@ -66,10 +65,10 @@ public class BorderButtons extends ViewGroup {
 		filledPainter.setAntiAlias(true);
 		this.setWillNotDraw(false);
 
-//		// Buttons kreieren
-//		for (int i = 0; i < 4; i++) {
-//			this.addVirtualButton("" + i);
-//		}
+		// // Buttons kreieren
+		// for (int i = 0; i < 4; i++) {
+		// this.addVirtualButton("" + i);
+		// }
 
 		setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -87,17 +86,20 @@ public class BorderButtons extends ViewGroup {
 	@Override
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		updateButtons();		
+		min = Math.min(w, h);
+		updateButtons();
 	}
 
 	public void updateButtons() {
 		for (int i = 0; i < virtualButtons.size(); i++) {
-			Path path = calculatePath(i,
+			ArrayList<PointF> positionList = calculatePath(i,
 					Math.min(this.getWidth(), this.getHeight()),
 					this.getWidth(), this.getHeight());
-			virtualButtons.get(i).updatePositions(path);
+			virtualButtons.get(i).updatePositions(positionList,
+					(int) (BUTTON_SIZE * min));
 		}
 	}
+
 	@Override
 	public boolean performClick() {
 		return super.performClick();
@@ -118,8 +120,8 @@ public class BorderButtons extends ViewGroup {
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			if (virtualButtons.get(i).checkClick(theta)) {
 				paintIndex = i;
-				 System.out.println("Button matched: " + i + " with Theta: "
-				 + theta);
+				System.out.println("Button matched: " + i + " with Theta: "
+						+ theta);
 				break;
 			}
 		}
@@ -128,15 +130,19 @@ public class BorderButtons extends ViewGroup {
 
 	public void addVirtualButton(String text) {
 		addVirtualButton(new RadialButton(text));
+
 	}
 
 	public void addVirtualButton(RadialButton button) {
 		virtualButtons.add(button);
+		button.setLinePainter(linePainter);
+		button.setFilledPainter(filledPainter);
 		button.setView(this);
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			RadialButton vButton = virtualButtons.get(i);
 			vButton.setThetaMin(i * TWOPI / virtualButtons.size());
 			vButton.setThetaMax((i + 1) * TWOPI / virtualButtons.size());
+
 		}
 		// invalidate View because a new Button was added.
 		postInvalidate();
@@ -228,8 +234,9 @@ public class BorderButtons extends ViewGroup {
 		return ret;
 	}
 
-	private Path calculatePath(int i, float min, float width, float height) {
-		Path path = new Path();
+	private ArrayList<PointF> calculatePath(int i, float min, float width,
+			float height) {
+		ArrayList<PointF> path = new ArrayList<PointF>();
 
 		float[] coords = getXY(i, min, width, height);
 
@@ -245,28 +252,26 @@ public class BorderButtons extends ViewGroup {
 		float x1 = coords[2];
 		float y1 = coords[3];
 
-		path.moveTo(startX + width / 2, startY + height / 2);
-		path.lineTo(x + width / 2, y + height / 2);
+		path.add(new PointF(startX + width / 2, startY + height / 2));
+		path.add(new PointF(x + width / 2, y + height / 2));
 
 		this.addCorners(path, (int) (x + width / 2), (int) (y + height / 2),
 				(int) (x1 + width / 2), (int) (y1 + height / 2), (int) width,
 				(int) height, 0, 0, false);
-		path.lineTo(x1 + width / 2, y1 + height / 2);
-		path.lineTo(startX1 + width / 2, startY1 + height / 2);
+		path.add(new PointF(x1 + width / 2, y1 + height / 2));
+		path.add(new PointF(startX1 + width / 2, startY1 + height / 2));
 		this.addCorners(path, (int) (startX + width / 2),
 				(int) (startY + height / 2), (int) (startX1 + width / 2),
 				(int) (startY1 + height / 2), (int) width
 						- (int) (2 * BUTTON_SIZE * min), (int) height
 						- (int) (2 * BUTTON_SIZE * min),
 				(int) (BUTTON_SIZE * min), (int) (BUTTON_SIZE * min), true);
-
-		path.lineTo(startX + width / 2, startY + height / 2);
-		path.close();
 		return path;
 	}
 
-	private void addCorners(Path path, int startX, int startY, int endX,
-			int endY, int width, int height, int minX, int minY, boolean reverse) {
+	private void addCorners(ArrayList<PointF> path, int startX, int startY,
+			int endX, int endY, int width, int height, int minX, int minY,
+			boolean reverse) {
 
 		boolean oneButton = (endY == startY && endX == startX);
 
@@ -337,28 +342,24 @@ public class BorderButtons extends ViewGroup {
 
 		if (reverse) {
 			for (int i = linesTo.size() - 1; i >= 0; i--) {
-				path.lineTo(linesTo.get(i).x, linesTo.get(i).y);
+				path.add(linesTo.get(i));
 			}
 		} else {
 			for (int i = 0; i < linesTo.size(); i++) {
-				path.lineTo(linesTo.get(i).x, linesTo.get(i).y);
+				path.add(linesTo.get(i));
 			}
 		}
 
 	}
+	
 
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void dispatchDraw(Canvas canvas) {
 		canvas.drawColor(Color.WHITE);
-		super.onDraw(canvas);
-		for (int i = 0; i < virtualButtons.size(); i++) {
+	    super.dispatchDraw(canvas);
+	    for (int i = 0; i < virtualButtons.size(); i++) {
 			virtualButtons.get(i).paint(canvas, linePainter);
 		}
-
-//		int width = canvas.getWidth();
-//		int height = canvas.getHeight();
-//
-//		int min = Math.min(width, height);
 
 		if (paintIndex != -1) {
 
@@ -368,18 +369,21 @@ public class BorderButtons extends ViewGroup {
 
 			paintIndex = -1;
 		}
-
+	   
 	}
 
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		width = r-l;
-		height = b-t;
+		width = r - l;
+		height = b - t;
 		min = Math.min(width, height);
-		
-		if(this.getChildCount()>0){
-			this.getChildAt(0).layout((int)(l + BUTTON_SIZE *min),(int)( t + BUTTON_SIZE *min), (int)(r- BUTTON_SIZE *min), (int)(b- BUTTON_SIZE *min));
+
+		if (this.getChildCount() > 0) {
+			this.getChildAt(0).layout((int) (l + BUTTON_SIZE * min) ,
+					(int) (t + BUTTON_SIZE * min) ,
+					(int) (r - BUTTON_SIZE * min) ,
+					(int) (b - BUTTON_SIZE * min) );
 		}
-		
+
 	}
 }
