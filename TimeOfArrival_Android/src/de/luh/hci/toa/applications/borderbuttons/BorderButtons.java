@@ -73,12 +73,16 @@ public class BorderButtons extends ViewGroup {
 		setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				float x = event.getX();
-				float y = event.getY();
-				double a = Math.atan2(y - getHeight() / 2, x - getWidth() / 2);
-				// Minus ist wichtig
-				input(-a);
-				return true;
+				if ((event.getAction() == MotionEvent.ACTION_DOWN)) {
+					float x = event.getX();
+					float y = event.getY();
+					double a = Math.atan2(y - getHeight() / 2, x - getWidth() / 2);
+					// Minus ist wichtig
+					input(-a);
+					return true;
+				} else {
+					return false;
+				}
 			}
 		});
 	}
@@ -264,8 +268,8 @@ public class BorderButtons extends ViewGroup {
 		this.addCorners(path, (int) (startX + width / 2),
 				(int) (startY + height / 2), (int) (startX1 + width / 2),
 				(int) (startY1 + height / 2), (int) width
-						- (int) (2 * BUTTON_SIZE * min), (int) height
-						- (int) (2 * BUTTON_SIZE * min),
+				- (int) (2 * BUTTON_SIZE * min), (int) height
+				- (int) (2 * BUTTON_SIZE * min),
 				(int) (BUTTON_SIZE * min), (int) (BUTTON_SIZE * min), true);
 		return path;
 	}
@@ -352,25 +356,25 @@ public class BorderButtons extends ViewGroup {
 		}
 
 	}
-	
+
 
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		canvas.drawColor(Color.WHITE);
-	    super.dispatchDraw(canvas);
-	    for (int i = 0; i < virtualButtons.size(); i++) {
+		super.dispatchDraw(canvas);
+		for (int i = 0; i < virtualButtons.size(); i++) {
 			virtualButtons.get(i).paint(canvas, linePainter);
 		}
 
 		if (paintIndex != -1) {
 
-//
-//			handler.removeCallbacks(r);
+			//
+			//			handler.removeCallbacks(r);
 			handler.postDelayed(r, 1000);
 
 			paintIndex = -1;
 		}
-	   
+
 	}
 
 	@Override
