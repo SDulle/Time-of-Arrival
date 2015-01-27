@@ -5,12 +5,12 @@
     android:layout_height="match_parent" >
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonRemove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_alignRight="@+id/button1"
-        android:layout_below="@+id/button1"
+        android:layout_alignLeft="@+id/buttonAdd"
+        android:layout_alignRight="@+id/buttonAdd"
+        android:layout_below="@+id/buttonAdd"
         android:onClick="startVisu"
         android:text="Visu" />
 
@@ -18,14 +18,14 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_alignRight="@+id/button2"
-        android:layout_below="@+id/button2"
+        android:layout_alignLeft="@+id/buttonRemove"
+        android:layout_alignRight="@+id/buttonRemove"
+        android:layout_below="@+id/buttonRemove"
         android:onClick="startTetris"
         android:text="Tetris" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/buttonAdd"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

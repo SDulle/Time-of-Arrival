@@ -1,14 +1,17 @@
 package de.luh.hci.toa.activities;
 
-import de.luh.hci.toa.applications.tetris.Tetris;
-import de.luh.hci.toa.network.TapListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
+import de.luh.hci.toa.applications.borderbuttons.BorderButtons;
+import de.luh.hci.toa.applications.borderbuttons.RadialButton;
+import de.luh.hci.toa.applications.tetris.Tetris;
+import de.luh.hci.toa.network.TapListener;
 
 public class TetrisActivity extends Activity implements TapListener {
 
 	Tetris tetris;
+	BorderButtons borderButtons;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +23,22 @@ public class TetrisActivity extends Activity implements TapListener {
 		
 		MainActivity.instance.tapReceiver.addTapListener(this);
 		
-		setContentView(tetris);
+		borderButtons = new BorderButtons(this, null);		
+		borderButtons.addView(tetris);
+		borderButtons.setThetaOffset(0.0);
+
+		//Tetris Sample
+		RadialButton left = new RadialButton("Links", tetris );
+		RadialButton turnLeft = new RadialButton("Links drehen", tetris );
+		RadialButton right = new RadialButton("Rechts", tetris );
+		RadialButton turnRight = new RadialButton("Rechts drehen", tetris );
+
+		borderButtons.addVirtualButton(right);
+		borderButtons.addVirtualButton(left);
+		borderButtons.addVirtualButton(turnLeft);
+		borderButtons.addVirtualButton(turnRight);
+		
+		setContentView(borderButtons);
 	}
 	
 	@Override
@@ -32,6 +50,6 @@ public class TetrisActivity extends Activity implements TapListener {
 
 	@Override
 	public void onTap(double x, double y, double theta) {
-		tetris.input(theta);
+		borderButtons.input(theta);
 	}
 }

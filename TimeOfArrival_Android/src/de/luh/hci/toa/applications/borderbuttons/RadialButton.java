@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.view.View;
 
 public class RadialButton {
@@ -38,8 +39,8 @@ public class RadialButton {
 	double thetaMax;
 	View view;
 	long pressedTime;
-	
-	public void setPressed(){
+
+	public void setPressed() {
 		pressedTime = System.currentTimeMillis() + 1000;
 	}
 
@@ -107,8 +108,12 @@ public class RadialButton {
 		float distance;
 
 		textPos = new PointF();
+		Rect textBounds = new Rect();
+		linePainter.getTextBounds(name, 0, name.length(), textBounds);
+		System.out.println("WEite von Text: " + textBounds.width());
 
 		for (int i = 0; i < corners.size(); i++) {
+
 			p1 = corners.get(i);
 			p2 = corners.get((i + 1) % corners.size());
 			distance = (float) Math.sqrt((p1.x - p2.x) * (p1.x - p2.x)
@@ -122,19 +127,25 @@ public class RadialButton {
 				if (p1.x == p2.x) {
 					if (p1.x == 0.0f) {
 						textPos.x += 3.0 * width / 4.0f;
+						
 						turnText = 270;
+						textPos.y += textBounds.width()/2;
 					} else {
 						turnText = 90;
 						textPos.x -= 3.0f * width / 4.0f;
+						textPos.y -= textBounds.width() /2;
 					}
+					
 				} else if (p1.y == p2.y) {
 					if (p1.y == 0.0f) {
+						
 						textPos.y += 3.0f * width / 4.0f;
 						turnText = 0;
 					} else {
 						textPos.y -= width / 4.0f;
 						turnText = 0;
 					}
+					textPos.x -= textBounds.width()/2;
 				}
 			}
 		}
@@ -178,14 +189,14 @@ public class RadialButton {
 	}
 
 	public void paint(Canvas canvas, Paint paint) {
-		
-		if(this.pressedTime > System.currentTimeMillis()){
+
+		if (this.pressedTime > System.currentTimeMillis()) {
 			filledPainter.setColor(Color.BLUE);
 		}
-		
+
 		canvas.drawPath(path, filledPainter);
 		filledPainter.setColor(Color.WHITE);
-		
+
 		canvas.drawPath(path, linePainter);
 
 		if (turnText != 0) {
@@ -194,6 +205,7 @@ public class RadialButton {
 
 			canvas.rotate(turnText, textPos.x, textPos.y);
 			canvas.drawText(name, textPos.x, textPos.y, linePainter);
+
 			linePainter.setAntiAlias(false);
 
 			canvas.restore();

@@ -1,7 +1,6 @@
 package de.luh.hci.toa.applications.borderbuttons;
 
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,9 +10,9 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
-public class BorderButtons extends ViewGroup {
+public class BorderButtons extends FrameLayout {
 	int width = 0;
 	int height = 0;
 	int min = 0;
@@ -23,6 +22,7 @@ public class BorderButtons extends ViewGroup {
 	private double thetaOffset = 0.0;
 	// in percent of Screen.
 	private static final float BUTTON_SIZE = 0.05f;
+	private static final int BUTTON_CLICKED_TIME = 1000;
 
 	Handler handler = new Handler();
 
@@ -36,8 +36,6 @@ public class BorderButtons extends ViewGroup {
 	Paint linePainter;
 	Paint filledPainter;
 
-	int paintIndex = -1;
-
 	/**
 	 * @param thetaOffset
 	 *            the thetaOffset to set
@@ -48,6 +46,11 @@ public class BorderButtons extends ViewGroup {
 			thetaOffset = thetaOffset + TWOPI;
 		}
 		this.updateButtons();
+		this.postInvalidate();
+	}
+
+	public BorderButtons(Context context) {
+		this(context, null);
 	}
 
 	public BorderButtons(Context context, AttributeSet attrs) {
@@ -60,15 +63,10 @@ public class BorderButtons extends ViewGroup {
 		linePainter.setTextSize(18);
 
 		filledPainter = new Paint();
-		filledPainter.setColor(Color.RED);
+		filledPainter.setColor(Color.BLUE);
 		filledPainter.setStyle(Paint.Style.FILL);
 		filledPainter.setAntiAlias(true);
 		this.setWillNotDraw(false);
-
-		// // Buttons kreieren
-		// for (int i = 0; i < 4; i++) {
-		// this.addVirtualButton("" + i);
-		// }
 
 		setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -76,7 +74,8 @@ public class BorderButtons extends ViewGroup {
 				if ((event.getAction() == MotionEvent.ACTION_DOWN)) {
 					float x = event.getX();
 					float y = event.getY();
-					double a = Math.atan2(y - getHeight() / 2, x - getWidth() / 2);
+					double a = Math.atan2(y - getHeight() / 2, x - getWidth()
+							/ 2);
 					// Minus ist wichtig
 					input(-a);
 					return true;
@@ -123,10 +122,10 @@ public class BorderButtons extends ViewGroup {
 
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			if (virtualButtons.get(i).checkClick(theta)) {
-				paintIndex = i;
 				virtualButtons.get(i).setPressed();
 				System.out.println("Button matched: " + i + " with Theta: "
 						+ theta);
+				handler.postDelayed(r, BUTTON_CLICKED_TIME);
 				break;
 			}
 		}
@@ -135,7 +134,6 @@ public class BorderButtons extends ViewGroup {
 
 	public void addVirtualButton(String text) {
 		addVirtualButton(new RadialButton(text));
-
 	}
 
 	public void addVirtualButton(RadialButton button) {
@@ -149,12 +147,24 @@ public class BorderButtons extends ViewGroup {
 			vButton.setThetaMax((i + 1) * TWOPI / virtualButtons.size());
 
 		}
+		this.updateButtons();
 		// invalidate View because a new Button was added.
 		postInvalidate();
 	}
 
 	public void removeVirtualButton(RadialButton button) {
 		virtualButtons.remove(button);
+		updateButtons();
+		// invalidate View because a Button was removed.
+		postInvalidate();
+	}
+
+	public void removeVirtualButton() {
+		if (virtualButtons.size() > 0) {
+			virtualButtons.remove(virtualButtons.size() - 1);
+			updateButtons();
+		}
+
 		// invalidate View because a Button was removed.
 		postInvalidate();
 	}
@@ -167,15 +177,20 @@ public class BorderButtons extends ViewGroup {
 	private static final double TWOPI = Math.PI * 2.0;
 
 	private float[] getXY(int i, float min, float width, float height) {
+		float max = Math.max(width, height);
 		float x = (float) Math.sin(((double) i) / virtualButtons.size() * TWOPI
 				+ PI2 + thetaOffset)
-				* min;
+				* max;
 		float y = (float) Math.cos(((double) i) / virtualButtons.size() * TWOPI
 				+ PI2 + thetaOffset)
-				* min;
+				* max;
 
 		float startX = 0.0f;
 		float startY = 0.0f;
+		
+//		System.out.println("h2 = "+ height/2 + " w2:" + width/2);
+//		
+//		System.out.println("X: " + x + " Y: "+ y);
 
 		float m = 0.0f;
 		// Steigung berechnen:
@@ -204,6 +219,8 @@ public class BorderButtons extends ViewGroup {
 			x = width / 2;
 			y = x * m;
 		}
+		
+//		System.out.println(" After X: " + x + " Y: "+ y);
 
 		// y = m* x;
 		// x= y/m;
@@ -268,8 +285,8 @@ public class BorderButtons extends ViewGroup {
 		this.addCorners(path, (int) (startX + width / 2),
 				(int) (startY + height / 2), (int) (startX1 + width / 2),
 				(int) (startY1 + height / 2), (int) width
-				- (int) (2 * BUTTON_SIZE * min), (int) height
-				- (int) (2 * BUTTON_SIZE * min),
+						- (int) (2 * BUTTON_SIZE * min), (int) height
+						- (int) (2 * BUTTON_SIZE * min),
 				(int) (BUTTON_SIZE * min), (int) (BUTTON_SIZE * min), true);
 		return path;
 	}
@@ -277,22 +294,24 @@ public class BorderButtons extends ViewGroup {
 	private void addCorners(ArrayList<PointF> path, int startX, int startY,
 			int endX, int endY, int width, int height, int minX, int minY,
 			boolean reverse) {
+		
+		boolean b1 = true, b2 = true, b3 = true, b4 =true;
 
 		boolean oneButton = (endY == startY && endX == startX);
 
 		ArrayList<PointF> linesTo = new ArrayList<PointF>();
 
-		// System.out.println("startX, " + startX + "endX: " + endX + " width: "
-		// + width + " startY: " + startY + " endY: " + endY + " height: "
-		// + height + " min: " + minX);
+//		 System.out.println("startX, " + startX + "endX: " + endX + " width: "
+//		 + width + " startY: " + startY + " endY: " + endY + " height: "
+//		 + height + " min: " + minX);
 
 		int x = startX;
 		int y = startY;
 
 		for (int i = 0; i < 2; i++) {
 
-			if (x == width + minX) {
-				for (int y1 = startY; y1 >= minY
+			if (x == width + minX && b1) {
+				for (int y1 = y; y1 >= minY
 						&& (!(y1 == endY && x == endX) || oneButton); y1--) {
 					if (y1 == minY || y1 == height + minY) {
 						linesTo.add(new PointF(x, y1));
@@ -302,9 +321,10 @@ public class BorderButtons extends ViewGroup {
 				if (y < minY) {
 					y = minY;
 				}
+				b1 = false;
 			}
 
-			if (y == minY) {
+			if (y == minY && b2) {
 				for (int x1 = x; x1 >= minX
 						&& (!(x1 == endX && y == endY) || oneButton); x1--) {
 					if (x1 == minX || x1 == width + minX) {
@@ -315,23 +335,24 @@ public class BorderButtons extends ViewGroup {
 				if (x < minX) {
 					x = minX;
 				}
+				b2 = false;
 			}
 
-			if (x == minX) {
-				for (int y1 = startY; y1 <= height + minY
+			if (x == minX && b3) {
+				for (int y1 = y; y1 <= height + minY
 						&& (!(y1 == endY && x == endX) || oneButton); y1++) {
 					if (y1 == minY || y1 == height + minY) {
 						linesTo.add(new PointF(x, y1));
-						// path.lineTo(x, y1);
 					}
 					y = y1;
 				}
 				if (y > height + minY) {
 					y = height + minY;
 				}
+				b3 = false;
 			}
 
-			if (y == height + minY) {
+			if (y == height + minY && b4) {
 				for (int x1 = x; x1 <= width + minX
 						&& (!(x1 == endX && y == endY) || oneButton); x1++) {
 					if (x1 == minX || x1 == width + minX) {
@@ -342,6 +363,7 @@ public class BorderButtons extends ViewGroup {
 				if (x > width + minX) {
 					x = width + minX;
 				}
+				b4 = false;
 			}
 		}
 
@@ -357,7 +379,6 @@ public class BorderButtons extends ViewGroup {
 
 	}
 
-
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		canvas.drawColor(Color.WHITE);
@@ -365,16 +386,6 @@ public class BorderButtons extends ViewGroup {
 		for (int i = 0; i < virtualButtons.size(); i++) {
 			virtualButtons.get(i).paint(canvas, linePainter);
 		}
-
-		if (paintIndex != -1) {
-
-			//
-			//			handler.removeCallbacks(r);
-			handler.postDelayed(r, 1000);
-
-			paintIndex = -1;
-		}
-
 	}
 
 	@Override
@@ -384,11 +395,13 @@ public class BorderButtons extends ViewGroup {
 		min = Math.min(width, height);
 
 		if (this.getChildCount() > 0) {
-			this.getChildAt(0).layout((int) (l + BUTTON_SIZE * min) ,
-					(int) (t + BUTTON_SIZE * min) ,
-					(int) (r - BUTTON_SIZE * min) ,
-					(int) (b - BUTTON_SIZE * min) );
+			this.getChildAt(0).layout((int) (l + BUTTON_SIZE * min),
+					(int) (t + BUTTON_SIZE * min),
+					(int) (r - BUTTON_SIZE * min),
+					(int) (b - BUTTON_SIZE * min));
+
 		}
 
+		System.out.println("ChILD COUNT: " + this.getChildCount());
 	}
 }

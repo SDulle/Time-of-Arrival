@@ -1,61 +1,97 @@
 package de.luh.hci.toa.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import de.luh.hci.toa.R;
 import de.luh.hci.toa.applications.borderbuttons.BorderButtons;
-import de.luh.hci.toa.applications.borderbuttons.IRadialButtonClickHandler;
-import de.luh.hci.toa.applications.borderbuttons.RadialButton;
-import de.luh.hci.toa.applications.hockey.Hockey;
-import de.luh.hci.toa.applications.tetris.Tetris;
-import de.luh.hci.toa.applications.visu.Visu;
-import de.luh.hci.toa.applications.webapp.WebViewport;
 import de.luh.hci.toa.network.TapListener;
 
 public class ButtonExample extends Activity implements TapListener {
 
 	BorderButtons bb;
-	RelativeLayout frameLayout;
-	
-	Tetris tetris;
-	Visu visu;
-	Hockey hockey;
-	WebViewport webViewPort; 
+	View view;
+	int number = 0;
 
+	TextView offset;
+	TextView offsetText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		tetris = new Tetris(this);
-		visu = new Visu(this);
-		hockey =new Hockey(this);
 		bb = new BorderButtons(this, null);
-		
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		MainActivity.instance.tapReceiver.addTapListener(this);
-		
-		
-		bb.addView(tetris);
+
+		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		view = layoutInflater.inflate(R.layout.button_example_layout, bb, true);
+
+		Button buttonAdd = (Button) view.findViewById(R.id.buttonAdd);
+		Button buttonRemove = (Button) view.findViewById(R.id.buttonRemove);
+		SeekBar seekbar = (SeekBar) view.findViewById(R.id.seekBar1);
+		offset = (TextView) view.findViewById(R.id.textView1);
+		offset.setTextColor(Color.BLACK);
+		offsetText = (TextView) view.findViewById(R.id.textOffset);
+		offsetText.setTextColor(Color.BLACK);
+
 		bb.setThetaOffset(0.0);
-		
-		
-		
-		
-		//Tetris Sample
-		RadialButton left = new RadialButton("Links", tetris );
-		RadialButton turnLeft = new RadialButton("Links drehen", tetris );
-		RadialButton right = new RadialButton("Rechts", tetris );
-		RadialButton turnRight = new RadialButton("Rechts drehen", tetris );
-		//RadialButton firstButton = new RadialButton("Test", (IRadialButtonClickHandler) tetris);
-		bb.addVirtualButton(right);
-		bb.addVirtualButton(left);
-		bb.addVirtualButton(turnLeft);
-		bb.addVirtualButton(turnRight);
-		
 		setContentView(bb);
+
+		seekbar.setMax(360);
+
+		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@SuppressLint("NewApi")
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				bb.setThetaOffset(progress / 180.0 * Math.PI);
+				offset.setText(progress + "°");
+			}
+		});
+
+		buttonAdd.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				bb.addVirtualButton("New Button NR: " + number);
+				number++;
+			}
+
+		});
+
+		buttonRemove.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				bb.removeVirtualButton();
+
+			}
+
+		});
 
 	}
 

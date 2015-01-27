@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
 		});
 
 		setContentView(R.layout.main_activity);
+	
 
 		// connectionInfoText = (EditText)findViewById(R.id.editText1);
 	}
