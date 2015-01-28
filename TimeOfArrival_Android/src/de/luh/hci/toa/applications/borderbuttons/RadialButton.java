@@ -110,7 +110,7 @@ public class RadialButton {
 		textPos = new PointF();
 		Rect textBounds = new Rect();
 		linePainter.getTextBounds(name, 0, name.length(), textBounds);
-		System.out.println("WEite von Text: " + textBounds.width());
+		//System.out.println("WEite von Text: " + textBounds.width());
 
 		for (int i = 0; i < corners.size(); i++) {
 
@@ -149,7 +149,7 @@ public class RadialButton {
 				}
 			}
 		}
-		System.out.println("Punkt: " + textPos.x + ", " + textPos.y);
+		//System.out.println("Punkt: " + textPos.x + ", " + textPos.y);
 	}
 
 	public String getName() {

@@ -90,6 +90,8 @@ public class BorderButtons extends FrameLayout {
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		min = Math.min(w, h);
+		width = w;
+		height = h;
 		updateButtons();
 	}
 
@@ -262,17 +264,17 @@ public class BorderButtons extends FrameLayout {
 
 		float[] coords = getXY(i, min, width, height);
 
-		float startX = coords[0];
-		float startY = coords[1];
-		float x = coords[2];
-		float y = coords[3];
+		float startX = Math.round(coords[0]);
+		float startY = Math.round(coords[1]);
+		float x = Math.round(coords[2]);
+		float y = Math.round(coords[3]);
 
 		coords = getXY(i + 1, min, width, height);
 
-		float startX1 = coords[0];
-		float startY1 = coords[1];
-		float x1 = coords[2];
-		float y1 = coords[3];
+		float startX1 = Math.round(coords[0]);
+		float startY1 = Math.round(coords[1]);
+		float x1 = Math.round(coords[2]);
+		float y1 = Math.round(coords[3]);
 
 		path.add(new PointF(startX + width / 2, startY + height / 2));
 		path.add(new PointF(x + width / 2, y + height / 2));
@@ -282,11 +284,11 @@ public class BorderButtons extends FrameLayout {
 				(int) height, 0, 0, false);
 		path.add(new PointF(x1 + width / 2, y1 + height / 2));
 		path.add(new PointF(startX1 + width / 2, startY1 + height / 2));
-		this.addCorners(path, (int) (startX + width / 2),
-				(int) (startY + height / 2), (int) (startX1 + width / 2),
-				(int) (startY1 + height / 2), (int) width
-						- (int) (2 * BUTTON_SIZE * min), (int) height
-						- (int) (2 * BUTTON_SIZE * min),
+		this.addCorners(path, (int) (startX + width / 2.0),
+				(int) (startY + height / 2.0), (int) (startX1 + width / 2),
+				(int) (startY1 + height / 2), (int) (width
+						- (int) (2.0 * BUTTON_SIZE * min)), (int) (height
+						- (int) (2.0 * BUTTON_SIZE * min)),
 				(int) (BUTTON_SIZE * min), (int) (BUTTON_SIZE * min), true);
 		return path;
 	}
@@ -370,10 +372,12 @@ public class BorderButtons extends FrameLayout {
 		if (reverse) {
 			for (int i = linesTo.size() - 1; i >= 0; i--) {
 				path.add(linesTo.get(i));
+				//System.out.println("Reverse: " + linesTo.get(i).x + ", " + linesTo.get(i).y);
 			}
 		} else {
 			for (int i = 0; i < linesTo.size(); i++) {
 				path.add(linesTo.get(i));
+				//System.out.println("Not reverse: " + linesTo.get(i).x + ", " + linesTo.get(i).y);
 			}
 		}
 
@@ -402,6 +406,6 @@ public class BorderButtons extends FrameLayout {
 
 		}
 
-		System.out.println("ChILD COUNT: " + this.getChildCount());
+		//System.out.println("ChILD COUNT: " + this.getChildCount());
 	}
 }
