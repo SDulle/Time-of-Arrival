@@ -164,6 +164,12 @@ public class BorderButtons extends FrameLayout {
 	public void removeVirtualButton() {
 		if (virtualButtons.size() > 0) {
 			virtualButtons.remove(virtualButtons.size() - 1);
+			for (int i = 0; i < virtualButtons.size(); i++) {
+				RadialButton vButton = virtualButtons.get(i);
+				vButton.setThetaMin(i * TWOPI / virtualButtons.size());
+				vButton.setThetaMax((i + 1) * TWOPI / virtualButtons.size());
+
+			}
 			updateButtons();
 		}
 
@@ -179,22 +185,22 @@ public class BorderButtons extends FrameLayout {
 	private static final double TWOPI = Math.PI * 2.0;
 
 	private float[] getXY(int i, float min, float width, float height) {
-		float max = Math.max(width, height);
-		float x = (float) Math.sin(((double) i) / virtualButtons.size() * TWOPI
+		double max = Math.max(width, height);
+		double x =  Math.sin(((double) i) / virtualButtons.size() * TWOPI
 				+ PI2 + thetaOffset)
 				* max;
-		float y = (float) Math.cos(((double) i) / virtualButtons.size() * TWOPI
+		double y =  Math.cos(((double) i) / virtualButtons.size() * TWOPI
 				+ PI2 + thetaOffset)
 				* max;
 
-		float startX = 0.0f;
-		float startY = 0.0f;
+		double startX = 0.0f;
+		double startY = 0.0f;
 		
 //		System.out.println("h2 = "+ height/2 + " w2:" + width/2);
 //		
 //		System.out.println("X: " + x + " Y: "+ y);
 
-		float m = 0.0f;
+		double m = 0.0f;
 		// Steigung berechnen:
 		if (x != 0.0f) {
 			m = y / x;
@@ -202,23 +208,23 @@ public class BorderButtons extends FrameLayout {
 			System.err.println("Division durch 0!");
 		}
 
-		if (y < -height / 2) {
-			y = -height / 2;
+		if (y < -height / 2.0) {
+			y = -height / 2.0;
 			x = y / m;
 		}
 
-		if (y > height / 2) {
-			y = height / 2;
+		if (y > height / 2.0) {
+			y = height / 2.0;
 			x = y / m;
 		}
 
-		if (x < -width / 2) {
-			x = -width / 2;
+		if (x < -width / 2.0) {
+			x = -width / 2.0;
 			y = x * m;
 		}
 
-		if (x > width / 2) {
-			x = width / 2;
+		if (x > width / 2.0) {
+			x = width / 2.0;
 			y = x * m;
 		}
 		
@@ -226,35 +232,35 @@ public class BorderButtons extends FrameLayout {
 
 		// y = m* x;
 		// x= y/m;
-		if (y <= 0) {
-			if (x >= width / 2) {
-				startX = width / 2 - BUTTON_SIZE * min;
+		if (y <= 0.0) {
+			if (x >= width / 2.0) {
+				startX = width / 2.0 - BUTTON_SIZE * min;
 				startY = startX * m;
-			} else if (x <= -width / 2) {
-				startX = -width / 2 + BUTTON_SIZE * min;
+			} else if (x <= -width / 2.0) {
+				startX = -width / 2.0 + BUTTON_SIZE * min;
 				startY = startX * m;
 			} else {
-				startY = BUTTON_SIZE * min - height / 2;
+				startY = BUTTON_SIZE * min - height / 2.0;
 				startX = startY / m;
 			}
 		} else {
-			if (x >= width / 2) {
-				startX = width / 2 - BUTTON_SIZE * min;
+			if (x >= width / 2.0) {
+				startX = width / 2.0 - BUTTON_SIZE * min;
 				startY = startX * m;
-			} else if (x <= -width / 2) {
-				startX = -width / 2 + BUTTON_SIZE * min;
+			} else if (x <= -width / 2.0) {
+				startX = -width / 2.0 + BUTTON_SIZE * min;
 				startY = startX * m;
 			} else {
-				startY = height / 2 - BUTTON_SIZE * min;
+				startY = height / 2.0 - BUTTON_SIZE * min;
 				startX = startY / m;
 			}
 		}
 
-		startX = Math.max(-width / 2 + BUTTON_SIZE * min,
-				Math.min(startX, width / 2 - BUTTON_SIZE * min));
-		startY = Math.max(-height / 2 + BUTTON_SIZE * min,
-				Math.min(startY, height / 2 - BUTTON_SIZE * min));
-		float[] ret = { startX, startY, x, y };
+		startX = Math.max(-width / 2.0 + BUTTON_SIZE * min,
+				Math.min(startX, width / 2.0 - BUTTON_SIZE * min));
+		startY = Math.max(-height / 2.0 + BUTTON_SIZE * min,
+				Math.min(startY, height / 2.0 - BUTTON_SIZE * min));
+		float[] ret = { (float)startX, (float)startY, (float)x, (float)y };
 		return ret;
 	}
 
@@ -286,10 +292,10 @@ public class BorderButtons extends FrameLayout {
 		path.add(new PointF(startX1 + width / 2, startY1 + height / 2));
 		this.addCorners(path, (int) (startX + width / 2.0),
 				(int) (startY + height / 2.0), (int) (startX1 + width / 2),
-				(int) (startY1 + height / 2), (int) (width
-						- (int) (2.0 * BUTTON_SIZE * min)), (int) (height
-						- (int) (2.0 * BUTTON_SIZE * min)),
-				(int) (BUTTON_SIZE * min), (int) (BUTTON_SIZE * min), true);
+				(int) (startY1 + height / 2), Math.round(width
+						-  2.0f * Math.round(BUTTON_SIZE * min)), Math.round(height
+						- 2.0f * Math.round(BUTTON_SIZE * min)),
+				 Math.round(BUTTON_SIZE * min), Math.round( BUTTON_SIZE * min), true);
 		return path;
 	}
 
@@ -303,9 +309,9 @@ public class BorderButtons extends FrameLayout {
 
 		ArrayList<PointF> linesTo = new ArrayList<PointF>();
 
-//		 System.out.println("startX, " + startX + "endX: " + endX + " width: "
-//		 + width + " startY: " + startY + " endY: " + endY + " height: "
-//		 + height + " min: " + minX);
+		 System.out.println("startX, " + startX + "endX: " + endX + " width: "
+		 + width + " startY: " + startY + " endY: " + endY + " height: "
+		 + height + " min: " + minX);
 
 		int x = startX;
 		int y = startY;
@@ -372,12 +378,12 @@ public class BorderButtons extends FrameLayout {
 		if (reverse) {
 			for (int i = linesTo.size() - 1; i >= 0; i--) {
 				path.add(linesTo.get(i));
-				//System.out.println("Reverse: " + linesTo.get(i).x + ", " + linesTo.get(i).y);
+				System.out.println("Reverse: " + linesTo.get(i).x + ", " + linesTo.get(i).y);
 			}
 		} else {
 			for (int i = 0; i < linesTo.size(); i++) {
 				path.add(linesTo.get(i));
-				//System.out.println("Not reverse: " + linesTo.get(i).x + ", " + linesTo.get(i).y);
+				System.out.println("Not reverse: " + linesTo.get(i).x + ", " + linesTo.get(i).y);
 			}
 		}
 
